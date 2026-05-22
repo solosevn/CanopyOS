@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanopyOS — Multi-Agent Digital Operating System for Commercial Construction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0C2340;
+    --navy-mid: #0C447C;
+    --navy-light: #185FA5;
+    --navy-wash: #E6F1FB;
+    --navy-pale: #B5D4F4;
+    --gold: #BA7517;
+    --gold-light: #EF9F27;
+    --gold-wash: #FAEEDA;
+    --text: #1a1a1a;
+    --text-mid: #444;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --surface: #f9fafb;
+    --white: #ffffff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 52px;
+  }
+  .nav-brand {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-brand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold-light);
+  }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+  .nav-links a {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 52px;
+    line-height: 52px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
+  .nav-status {
+    font-size: 11px;
+    background: var(--gold-wash);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #f0f6ff 0%, #ffffff 100%);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .hero-title {
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+  .hero-tagline {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 540px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  .hero-pills {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--white);
+  }
+  .pill i { font-size: 13px; color: var(--navy-light); }
+
+  /* LAYOUT */
+  .page { max-width: 840px; margin: 0 auto; padding: 0 2rem; }
+
+  /* SECTION HEADER */
+  .section-wrap { padding: 4rem 0 0; }
+  .section-header { margin-bottom: 2.5rem; }
+  .section-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+  .section-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  /* TOC */
+  .toc {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    margin-bottom: 3rem;
+  }
+  .toc-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.3rem 0;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .toc-item:hover { color: var(--navy-light); }
+  .toc-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    flex-shrink: 0;
+  }
+
+  /* PERSPECTIVE */
+  .perspective {
+    margin-bottom: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .perspective:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .p-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: var(--navy-wash);
+    color: var(--navy-mid);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .p-badge i { font-size: 12px; }
+  .p-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.25rem;
+  }
+  .p-lead {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+  .p-body {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .p-body:last-child { margin-bottom: 0; }
+
+  /* TECH CARDS */
+  .tech-card {
+    display: flex;
+    gap: 14px;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .tc-icon {
+    width: 34px; height: 34px;
+    border-radius: 7px;
+    background: var(--navy-wash);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tc-icon i { font-size: 16px; color: var(--navy-light); }
+  .tc-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .tc-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    line-height: 2;
+    overflow-x: auto;
+    margin: 1.25rem 0;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4rem 0;
+  }
+
+  /* PROBLEM BOX */
+  .prob-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .prob-head {
+    background: var(--navy);
+    padding: 1.5rem 1.75rem;
+  }
+  .prob-head-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .prob-head-sub {
+    font-size: 13px;
+    color: var(--navy-pale);
+    font-style: italic;
+  }
+  .prob-items { padding: 0.5rem 1.75rem; background: var(--surface); }
+  .prob-item {
+    display: flex;
+    gap: 14px;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .prob-item:last-child { border-bottom: none; }
+  .prob-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--navy-wash);
+    color: var(--navy-mid);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .prob-text { font-size: 14px; color: var(--text-mid); line-height: 1.75; }
+
+  /* STAT CARDS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 2.5rem;
+  }
+  .stat {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.1rem 1.2rem;
+    background: var(--white);
+  }
+  .stat-val {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .stat-source {
+    font-size: 10px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+    font-style: italic;
+  }
+
+  /* BODY PARAGRAPHS (Why section) */
+  .why-body { margin-top: 0.5rem; }
+  .why-p {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .why-p:last-child { margin-bottom: 0; }
+  .why-p em { font-style: italic; color: var(--text); }
+  .why-p strong { font-weight: 600; color: var(--text); }
+
+  /* BRIDGE */
+  .bridge {
+    border-left: 3px solid var(--navy-light);
+    background: var(--navy-wash);
+    padding: 1.1rem 1.5rem;
+    margin-top: 2rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .bridge p {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--navy-mid);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 6rem;
+    padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  footer p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  footer strong { color: var(--text); font-weight: 500; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .page { padding: 0 1.25rem; }
+    .stats { grid-template-columns: 1fr; }
+    .top-nav { padding: 0 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <span class="nav-brand-dot"></span>
+    CanopyOS
+  </div>
+  <ul class="nav-links">
+    <li><a href="#what" class="active">What is CanopyOS?</a></li>
+    <li><a href="#why" class="active">Why CanopyOS?</a></li>
+    <li><a href="#" style="opacity:0.4; cursor:default; pointer-events:none">How it Works</a></li>
+  </ul>
+  <div class="nav-status">Internal Draft</div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="hero-eyebrow">Internal Enterprise Architecture</p>
+  <h1 class="hero-title">CanopyOS</h1>
+  <p class="hero-tagline">An agnostic, lifecycle-aware, multi-agent digital operating system engineered for commercial construction.</p>
+  <div class="hero-pills">
+    <span class="pill"><i class="ti ti-cpu"></i> Multi-Agent Orchestration</span>
+    <span class="pill"><i class="ti ti-lock"></i> Local / On-Premise</span>
+    <span class="pill"><i class="ti ti-chart-line"></i> S-Curve Lifecycle-Aware</span>
+    <span class="pill"><i class="ti ti-user-check"></i> Human-in-the-Loop</span>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ======================== -->
+  <!-- SECTION 01: WHAT         -->
+  <!-- ======================== -->
+  <section id="what" class="section-wrap">
+    <div class="section-header">
+      <div class="section-eyebrow">Section 01</div>
+      <h2 class="section-title">What is CanopyOS?</h2>
+      <p class="section-sub">Three perspectives — business, field, and technical — defining the system.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <a class="toc-item" href="#p1"><span class="toc-dot"></span>Perspective 1 — Commercial business</a>
+      <a class="toc-item" href="#p2"><span class="toc-dot"></span>Perspective 2 — Field and operations</a>
+      <a class="toc-item" href="#p3"><span class="toc-dot"></span>Perspective 3 — Technical architecture</a>
+    </div>
+
+    <!-- P1 -->
+    <div class="perspective" id="p1">
+      <div class="p-badge"><i class="ti ti-building"></i> Perspective 1</div>
+      <h3 class="p-title">Commercial business</h3>
+      <p class="p-lead">CanopyOS is a digital, multi-agent operating system engineered specifically for a construction project. Think of it as an intelligent, invisible canopy that hovers over your entire job site, connecting every moving piece of data in real time. It functions as a 24/7 central cognitive brain for the project.</p>
+      <p class="p-body">Instead of forcing your valuable project team to spend their 60-hour workweeks copy-pasting data, tracking down missing logs, or chasing architects for critical answers, CanopyOS deploys an internal team of automated "digital employees" to handle the administrative plumbing behind the scenes. It is fully aware of your project schedule and automatically shifts its processing power up or down depending on how chaotic the active phase of construction is.</p>
+      <p class="p-body">Your physical staff remains the ultimate authority, validating the digital work via a natural, human-like voice conversation directly with Canopy, a quick tap on a mobile dashboard, or a simple approval button. This radical operational leverage allows a leaner, elite core team to deliver massive, complex projects without the standard administrative fatigue and burnout.</p>
+    </div>
+
+    <!-- P2 -->
+    <div class="perspective" id="p2">
+      <div class="p-badge"><i class="ti ti-helmet"></i> Perspective 2</div>
+      <h3 class="p-title">Field and operations</h3>
+      <p class="p-lead">CanopyOS is like having an invisible, hyper-intelligent field engineer floating right over the job site, accessible straight from your tablet or phone.</p>
+      <p class="p-body">When you're out in the field and notice an issue or a structural conflict, you don't have to step away from production or walk back to the trailer to resolve it. You simply have a natural, real-time conversation with Canopy and explain what you see. Instantly, its digital sub-agents spring into action — sweeping through thousands of pages of blueprints and contract specifications to isolate the exact contradiction and automatically generate a flawless, professional RFI draft.</p>
+      <p class="p-body">Once the system queues it up, you or your project manager can review the draft right on your screen, modify it via voice if needed, and send it to the architect with a quick approval. From that point on, you never have to manually track it, log it, or try to remember it. CanopyOS continuously watches the clock against your active milestone schedule, autonomously chasing down un-answered items and alerting the team if a delayed response is getting dangerously close to holding up an upcoming trade sequence or concrete pour.</p>
+    </div>
+
+    <!-- P3 -->
+    <div class="perspective" id="p3">
+      <div class="p-badge"><i class="ti ti-cpu"></i> Perspective 3</div>
+      <h3 class="p-title">Technical architecture</h3>
+      <p class="p-lead">CanopyOS is an agnostic, state-driven, multi-agent orchestration infrastructure. Instead of relying entirely on expensive cloud calls to outside foundational labs, the system runs locally on our own secure business unit or job-site servers.</p>
+      <p class="p-body">By deploying private, localized models, we ensure maximum data privacy, near-zero latency, and a much lower total cost of ownership over the project lifecycle. Under the hood, the infrastructure consists of four core layers:</p>
+
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-database"></i></div>
+        <div>
+          <div class="tc-name">Agnostic ingestion engine</div>
+          <div class="tc-desc">Connects directly to internal project repositories and document servers, instantly indexing unstructured data — blueprints, specifications, contract items, and 3D modeling matrices — into a highly optimized, localized RAG mesh.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-chart-line"></i></div>
+        <div>
+          <div class="tc-name">State-driven lifecycle architecture</div>
+          <div class="tc-desc">Explicitly mapped to the project's physical S-curve. Programmatic levers and toggles dynamically scale background processing — specialized sub-agents brought online or hibernated to match active phases: procurement, rough-in, or commissioning.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-users"></i></div>
+        <div>
+          <div class="tc-name">Discipline-specific sub-agents</div>
+          <div class="tc-desc">A coordinated swarm of digital employees — RFI Agent, Submittal & Logistics Agent, Labor & Manpower Agent, and Predictive Safety Agent — each hyper-focused on a single construction domain.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-shield-check"></i></div>
+        <div>
+          <div class="tc-name">Defense-in-depth integrity gates</div>
+          <div class="tc-desc">Every autonomous output is funneled through a strict multi-model Critic/Arena parallel evaluation pipeline — eliminating confabulation and enforcing data governance before any payload reaches the human-in-the-loop approval endpoint.</div>
+        </div>
+      </div>
+
+      <div class="arch">[ Voice / Tablet Interface in the Field ]
+            |
+            v
+[ CanopyOS Master Orchestrator — Local Secure Server ]
+            |
+   .---------+---------.
+   v         v         v
+[RAG Mesh] [Lifecycle] [Sub-Agent Swarm]
+            |
+            v
+[ Defense-in-Depth Critic / Arena ]
+            |
+            v
+[ Human-In-The-Loop Approval (HITL) ]</div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ======================== -->
+  <!-- SECTION 02: WHY          -->
+  <!-- ======================== -->
+  <section id="why" class="section-wrap" style="padding-bottom: 2rem;">
+    <div class="section-header">
+      <div class="section-eyebrow">Section 02</div>
+      <h2 class="section-title">Why CanopyOS?</h2>
+      <p class="section-sub">The problems this system is engineered to address.</p>
+    </div>
+
+    <!-- Problem Statement Box -->
+    <div class="prob-box">
+      <div class="prob-head">
+        <div class="prob-head-title">What problems would CanopyOS test against?</div>
+        <div class="prob-head-sub">(What problems would CanopyOS try to solve?)</div>
+      </div>
+      <div class="prob-items">
+        <div class="prob-item">
+          <div class="prob-num">1</div>
+          <div class="prob-text">As project volume grows, so does the demand for staffing — and not all of that demand can be met with experienced personnel. Getting new and developing people productive quickly, without overburdening the experienced staff responsible for quality and delivery, is one of the central operational challenges in large-scale commercial construction today.</div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">2</div>
+          <div class="prob-text">Separate from staffing, even a fully experienced project team is managing a volume of information — documents, RFIs, submittals, trade conflicts, schedule dependencies — that is increasingly difficult to move quickly and accurately without a purpose-built system underneath it. Data availability at the point of decision is a direct driver of project outcomes.</div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">3</div>
+          <div class="prob-text">When either of these goes unaddressed, the result is rework, schedule compression, and compounding pressure on the people responsible for delivery — costs that are measurable, documented, and growing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val">92%</div>
+        <div class="stat-label">of commercial construction firms struggling to fill open positions in 2026</div>
+        <div class="stat-source">AGC 2026 Construction Hiring &amp; Business Outlook, Feb 2026 · 951 firms surveyed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">$31B</div>
+        <div class="stat-label">annual U.S. cost of poor project data and miscommunication</div>
+        <div class="stat-source">Autodesk + FMI, Construction Disconnected, 2023</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">~2 days</div>
+        <div class="stat-label">lost per worker per week to avoidable issues and searching for project information</div>
+        <div class="stat-source">Autodesk + FMI, Construction Disconnected, 2023</div>
+      </div>
+    </div>
+
+    <!-- Body Paragraphs -->
+    <div class="why-body">
+      <p class="why-p">The staffing environment in commercial construction is under genuine pressure. The AGC's <em>2026 Construction Hiring and Business Outlook</em> — released in February 2026 and reflecting survey input from 951 firms — found that 92% of commercial construction companies reported difficulty filling open positions, with an estimated 499,000 additional workers needed industrywide.</p>
+
+      <p class="why-p">The challenge is not just headcount — it is experience depth. Historically, well-run projects relied on a strong majority of seasoned staff anchoring the team, with a smaller share of developing people growing into those roles. That balance is shifting. As project volume increases and experienced personnel retire or move out of field roles, jobs are increasingly being staffed with higher proportions of new or still-developing people. Experienced staff absorb that difference — and instead of building and leading, they are teaching, checking, and correcting. That shift has a direct operational cost that rarely shows up on a budget line but always shows up on the schedule.</p>
+
+      <p class="why-p">The staffing challenge collides with a separate but compounding reality: the sheer volume of information that must move correctly on a commercial project. A 2023 joint study by Autodesk and management consulting firm FMI — titled <em>Construction Disconnected</em> — found that construction workers lose nearly two full working days every week resolving avoidable issues and searching for the right project information, with poor communication and bad project data carrying a $31 billion annual price tag for the U.S. industry. A separate 2024 Dodge Data &amp; Analytics report, <em>Not by Design</em>, found that poor collaboration alone erodes roughly 10% of project profit. These are not margin issues. On a $200 million project, 10% is $20 million.</p>
+
+      <p class="why-p">CanopyOS is built to address both problems simultaneously — not by replacing the people responsible for these projects, but by giving them a system that handles the information layer so they can focus on the work only experienced humans can do.</p>
+
+      <div class="bridge">
+        <p>The question is not whether the industry needs this. The data says it does. The question is who builds it first — and whether the system is built with the operational precision the job demands.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p><strong>CanopyOS</strong> — Internal Enterprise Architecture Document<br>
+  David Solomon · Operational Excellence Manager &amp; Systems Engineer<br>
+  Document Date: May 2026 · Status: Architecture Locked / Ready for Internal Proposal</p>
+</footer>
+
+</body>
+</html>
