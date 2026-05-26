@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanopyOS — Multi-Agent Digital Operating System for Commercial Construction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0C2340;
+    --navy-mid: #0C447C;
+    --navy-light: #185FA5;
+    --navy-wash: #E6F1FB;
+    --navy-pale: #B5D4F4;
+    --gold: #BA7517;
+    --gold-light: #EF9F27;
+    --gold-wash: #FAEEDA;
+    --text: #1a1a1a;
+    --text-mid: #444;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --surface: #f9fafb;
+    --white: #ffffff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 52px;
+  }
+  .nav-brand {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-brand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold-light);
+  }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+  .nav-links a {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 52px;
+    line-height: 52px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
+  .nav-status {
+    font-size: 11px;
+    background: var(--gold-wash);
+    color: var(--gold);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #f0f6ff 0%, #ffffff 100%);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .hero-title {
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+  .hero-tagline {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 540px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  .hero-pills {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--white);
+  }
+  .pill i { font-size: 13px; color: var(--navy-light); }
+
+  /* LAYOUT */
+  .page { max-width: 840px; margin: 0 auto; padding: 0 2rem; }
+
+  /* SECTION HEADER */
+  .section-wrap { padding: 4rem 0 0; }
+  .section-header { margin-bottom: 2.5rem; }
+  .section-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+  .section-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  /* TOC */
+  .toc {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--navy-light);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    margin-bottom: 3rem;
+  }
+  .toc-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.3rem 0;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .toc-item:hover { color: var(--navy-light); }
+  .toc-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    flex-shrink: 0;
+  }
+
+  /* PERSPECTIVE */
+  .perspective {
+    margin-bottom: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .perspective:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .p-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: var(--navy-wash);
+    color: var(--navy-mid);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .p-badge i { font-size: 12px; }
+  .p-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.25rem;
+  }
+  .p-lead {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+  .p-body {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+  .p-body:last-child { margin-bottom: 0; }
+
+  /* TECH CARDS */
+  .tech-card {
+    display: flex;
+    gap: 14px;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .tc-icon {
+    width: 34px; height: 34px;
+    border-radius: 7px;
+    background: var(--navy-wash);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tc-icon i { font-size: 16px; color: var(--navy-light); }
+  .tc-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .tc-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    line-height: 2;
+    overflow-x: auto;
+    margin: 1.25rem 0;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4rem 0;
+  }
+
+  /* PROBLEM BOX */
+  .prob-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .prob-head {
+    background: var(--navy);
+    padding: 1.5rem 1.75rem;
+  }
+  .prob-head-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .prob-head-sub {
+    font-size: 13px;
+    color: var(--navy-pale);
+    font-style: italic;
+  }
+  .prob-items { padding: 0.5rem 1.75rem; background: var(--surface); }
+  .prob-item {
+    display: flex;
+    gap: 14px;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .prob-item:last-child { border-bottom: none; }
+  .prob-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--navy-wash);
+    color: var(--navy-mid);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .prob-text { font-size: 14px; color: var(--text-mid); line-height: 1.75; }
+
+  /* STAT CARDS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 2.5rem;
+  }
+  .stat {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.1rem 1.2rem;
+    background: var(--white);
+  }
+  .stat-val {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .stat-source {
+    font-size: 10px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+    font-style: italic;
+  }
+
+  /* BODY PARAGRAPHS (Why section) */
+  .why-body { margin-top: 0.5rem; }
+  .why-p {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+  .why-p:last-child { margin-bottom: 0; }
+  .why-p em { font-style: italic; color: var(--text); }
+  .why-p strong { font-weight: 600; color: var(--text); }
+
+  /* BRIDGE */
+  .bridge {
+    border-left: 3px solid var(--navy-light);
+    background: var(--navy-wash);
+    padding: 1.1rem 1.5rem;
+    margin-top: 2rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .bridge p {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--navy-mid);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 6rem;
+    padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  footer p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  footer strong { color: var(--text); font-weight: 500; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .page { padding: 0 1.25rem; }
+    .stats { grid-template-columns: 1fr; }
+    .top-nav { padding: 0 1.25rem; }
+  }
+
+  /* ───── ARCHITECTURE (Phase 03) CSS ───── */
+
+  /* ───── PAGE HEADER ───── */
+  #how-it-works .page-header { text-align: center; margin-bottom: 36px; }
+  #how-it-works .page-header .eyebrow {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: #BA7517; margin-bottom: 10px;
+  }
+  #how-it-works .page-header h1 {
+    font-size: 38px; font-weight: 800; color: #0C2340;
+    letter-spacing: -0.025em; margin-bottom: 10px;
+  }
+  #how-it-works .page-header p {
+    font-size: 16px; color: #617089; font-weight: 400;
+    max-width: 520px; margin: 0 auto; line-height: 1.5;
+  }
+
+  /* ───── ARENA ───── */
+  .arena-wrap { overflow-x: auto; padding-bottom: 8px; width: 100%; max-width: 900px; }
+  .arena {
+    position: relative;
+    width: 860px; height: 1140px;
+    background: linear-gradient(155deg, #0C2340 0%, #0A1929 55%, #0B1E36 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    overflow: visible;
+    margin: 0 auto;
+  }
+
+  /* ───── SVG OVERLAY ───── */
+  .arena-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 6;
+  }
+
+  /* ───── DOCUMENT INGESTION ───── */
+  .ingestion-strip {
+    position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px; z-index: 10; white-space: nowrap;
+  }
+  .ingestion-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.38);
+  }
+  .ingestion-pills { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+  .ingestion-pill {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px; padding: 3px 11px; font-size: 11px;
+    color: rgba(255,255,255,0.65); font-weight: 500; transition: all 0.2s;
+  }
+  .ingestion-pill:hover {
+    background: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.9);
+  }
+
+  /* ───── CANOPY AGENT ───── */
+  .canopy-agent {
+    position: absolute; top: 180px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #0C2340 0%, #0F2A50 100%);
+    border: 2px solid rgba(186,117,23,0.65); border-radius: 14px;
+    padding: 20px 28px 22px; text-align: center; z-index: 10; cursor: pointer;
+    box-shadow: 0 0 40px rgba(186,117,23,0.18), 0 8px 32px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s, border-color 0.3s; min-width: 220px; max-width: 280px;
+  }
+  .canopy-agent:hover {
+    box-shadow: 0 0 60px rgba(239,159,39,0.55), 0 0 28px rgba(239,159,39,0.35), 0 8px 40px rgba(0,0,0,0.6);
+    border-color: rgba(239,159,39,0.9);
+  }
+  .canopy-title { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: 0.01em; }
+  .canopy-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 6px; letter-spacing: 0.02em; }
+  .canopy-sub-name { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; font-style: italic; }
+
+  /* ───── MINI SYSTEMS ───── */
+  .mini-system { position: absolute; top: 180px; z-index: 10; }
+  .mini-system.entry { left: 48px; }
+  .mini-system.output { right: 48px; }
+  .mini-system-label {
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.3);
+    text-align: center; margin-bottom: 8px;
+  }
+  .mini-nodes { display: flex; flex-direction: column; gap: 7px; }
+  .mini-node {
+    background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 7px 14px; font-size: 11.5px;
+    color: rgba(255,255,255,0.68); font-weight: 500; white-space: nowrap;
+    transition: all 0.2s; cursor: default;
+  }
+  .mini-node:hover {
+    background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9);
+  }
+  .mini-icon { margin-right: 6px; }
+
+  /* ───── CPU CHIP (CMC) ───── */
+  /* Wrapper holds the chip + SVG PCB board so they size together */
+  .cmc-wrapper {
+    position: absolute;
+    left: 50%; top: 380px;
+    transform: translateX(-50%);
+    width: 640px; height: 640px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  /* SVG PCB board behind/around the chip */
+  .cpu-pins {
+    position: absolute; inset: 0;
+    width: 640px; height: 640px;
+    pointer-events: none;
+  }
+  /* The actual chip — silver, sits over the SVG chip area (110/500*640=141px) */
+  .cmc-chip {
+    position: absolute; top: 141px; left: 141px;
+    width: 358px; height: 358px;
+    border-radius: 14px;
+    background: #b2bcc8;
+    border: none;
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92);
+    overflow: hidden;
+    pointer-events: all;
+    transition: box-shadow 0.3s;
+  }
+  .cmc-chip:hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92), 0 0 28px rgba(0,204,238,0.18);
+  }
+  .cmc-chip::before { display: none; }
+
+  /* CMC default view */
+  .cmc-default {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 0 8px 8px;
+    gap: 4px;
+    transition: opacity 0.35s, transform 0.35s;
+    transform-origin: center;
+  }
+  .cmc-default.hidden { opacity: 0; pointer-events: none; transform: scale(0.97); }
+
+  .cmc-header { padding: 14px 12px 0; text-align: center; flex-shrink: 0; background: transparent; }
+  .cmc-header-title {
+    font-size: 13px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #1a2e40;
+  }
+  .scope-tiers {
+    display: flex; justify-content: center; gap: 4px;
+    padding: 5px 4px 0; flex-shrink: 0;
+  }
+  .scope-chip {
+    font-size: 10px; font-weight: 700; padding: 3px 9px;
+    border-radius: 999px; cursor: pointer; transition: all 0.15s;
+    white-space: nowrap; border: none; outline: none;
+  }
+  .scope-chip:hover { transform: scale(1.08); opacity: 0.85; }
+  .scope-chip.t1 { background: #0C2340; color: #fff; }
+  .scope-chip.t2 { background: #0C447C; color: #fff; }
+  .scope-chip.t3 { background: #185FA5; color: #fff; }
+
+  /* Bands — each is a distinct rounded button card */
+  .cmc-band {
+    flex: 1; padding: 7px 14px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer; border-radius: 8px; border: 2px solid transparent;
+    position: relative; text-align: center;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.12s;
+    min-height: 0;
+  }
+  .cmc-band:hover {
+    border-color: rgba(0,204,238,0.55);
+    box-shadow: 0 0 0 1px rgba(0,204,238,0.2), 0 0 20px rgba(0,204,238,0.28), inset 0 0 18px rgba(0,204,238,0.1);
+    transform: scale(1.015);
+  }
+  .band-source  { background: #F7F3E8; }
+  .band-compile { background: #EEEAFE; }
+  .band-retriev { background: #E8F7FB; }
+  .band-sleep {
+    flex: 0 0 34px; background: #F9E9EF;
+    padding: 0 14px; justify-content: center;
+    align-items: center; flex-direction: row;
+  }
+  .band-name {
+    font-size: 10.5px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.09em; color: #4a6070; margin-bottom: 5px;
+    text-align: center; width: 100%;
+  }
+  .band-nodes { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; justify-content: center; }
+  .band-pill {
+    font-size: 10px; font-weight: 600;
+    background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.09);
+    border-radius: 5px; padding: 2px 8px; color: #0C2340; white-space: nowrap;
+  }
+  .band-arr { font-size: 9px; color: #aaa; flex-shrink: 0; }
+  .band-hint { display: none; }
+  .sleep-text {
+    font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.09em; color: #b06070; text-align: center;
+  }
+  .ep-strip { margin-top: 4px; display: flex; align-items: center; gap: 5px; justify-content: center; }
+  .ep-badge {
+    font-size: 9px; font-weight: 700; background: #FFF1DF;
+    border: 1px solid rgba(186,117,23,0.4); border-radius: 5px;
+    padding: 2px 8px; color: #BA7517; white-space: nowrap;
+  }
+  .hitl-badge {
+    font-size: 9px; font-weight: 700; background: #EF9F27;
+    border-radius: 5px; padding: 2px 8px; color: #0C2340; white-space: nowrap;
+  }
+
+  /* ───── AGENT PANEL ───── */
+  .cmc-agent-panel {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #0C2340 0%, #0A1929 100%);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s, transform 0.35s;
+    transform: scale(1.02); transform-origin: center; overflow: hidden;
+  }
+  .cmc-agent-panel.visible {
+    opacity: 1; pointer-events: all; transform: scale(1);
+  }
+  .ap-close-btn {
+    position: absolute; top: 52px; right: 44px;
+    width: 26px; height: 26px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%; color: rgba(255,255,255,0.65); font-size: 12px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 20; transition: all 0.15s; flex-shrink: 0;
+  }
+  .ap-close-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+  .ap-body {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 44px 44px; text-align: center;
+    overflow-y: auto; scrollbar-width: none;
+  }
+  .ap-body::-webkit-scrollbar { display: none; }
+  .ap-icon { font-size: 34px; line-height: 1; margin-bottom: 9px; }
+  .ap-name { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+  .ap-tagline {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #EF9F27; margin-bottom: 12px;
+  }
+  .ap-desc { font-size: 12px; color: rgba(255,255,255,0.68); line-height: 1.6; margin-bottom: 14px; }
+  .ap-cmc-label {
+    font-size: 8.5px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.28);
+    margin-bottom: 6px; align-self: stretch; text-align: left;
+  }
+  .ap-cmc-rule { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 8px; }
+  .ap-cmc-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.55; text-align: left; align-self: stretch; }
+
+  /* ───── AGENT NODES ───── */
+  .agent-node {
+    position: absolute; width: 93px; z-index: 8;
+    cursor: pointer; text-align: center;
+  }
+  .agent-node:hover { z-index: 50; }
+  .agent-bubble {
+    width: 93px; height: 93px; border-radius: 50%;
+    background: #fff; border: 2px solid rgba(124,141,168,0.35);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 2px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.2s;
+  }
+  .agent-bubble:hover {
+    border-color: #EF9F27;
+    box-shadow: 0 0 36px rgba(239,159,39,0.75), 0 0 18px rgba(239,159,39,0.5), 0 4px 16px rgba(0,0,0,0.3);
+    transform: scale(1.1);
+  }
+  .agent-node.selected .agent-bubble {
+    background: #EF9F27; border-color: #BA7517;
+    box-shadow: 0 0 44px rgba(239,159,39,0.85), 0 0 20px rgba(239,159,39,0.6), 0 4px 16px rgba(0,0,0,0.3);
+    transform: scale(1.12);
+  }
+  .a-icon { font-size: 27px; line-height: 1; pointer-events: none; }
+  .agent-name-lbl {
+    font-size: 9px; font-weight: 700; color: #0C2340;
+    line-height: 1.25; text-align: center; padding: 0 6px;
+    pointer-events: none; white-space: normal; word-break: normal;
+    width: 100%;
+  }
+  .agent-node.selected .agent-name-lbl { color: #5a3000; }
+
+  /* Tooltip — position:fixed so it escapes all container clipping */
+  #agentTooltip {
+    position: fixed;
+    background: rgba(12,35,64,0.97); color: rgba(255,255,255,0.9);
+    font-size: 13px; line-height: 1.5; padding: 13px 16px;
+    border-radius: 11px; width: 580px; pointer-events: none;
+    opacity: 0; transition: opacity 0.18s;
+    border: 1.5px solid rgba(239,159,39,0.65); z-index: 99999;
+    text-align: left;
+    box-shadow: 0 0 22px rgba(239,159,39,0.38), 0 8px 28px rgba(0,0,0,0.55);
+  }
+  #agentTooltip.visible { opacity: 1; }
+  #agentTooltip::after {
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+    border: 6px solid transparent;
+  }
+  #agentTooltip.tip-above::after {
+    top: 100%; border-top-color: rgba(12,35,64,0.97);
+  }
+  #agentTooltip.tip-below::after {
+    bottom: 100%; border-bottom-color: rgba(12,35,64,0.97);
+  }
+  .tip-breakdown {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 13px; line-height: 1.8;
+  }
+  .tip-breakdown-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; }
+  .tip-breakdown-row::before { content: '•'; color: rgba(255,255,255,0.35); flex-shrink: 0; }
+  .tip-skill {
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: #EF9F27; background: rgba(239,159,39,0.12);
+    padding: 1px 5px; border-radius: 3px; white-space: nowrap;
+  }
+  .tip-lbl { color: rgba(255,255,255,0.9); font-weight: 600; }
+  .tip-dim { color: rgba(255,255,255,0.6); }
+  /* keep old .agent-tip hidden — replaced by #agentTooltip */
+  .agent-tip { display: none; }
+  .agent-node.tip-below .agent-tip::after {
+    top: auto; bottom: 100%;
+    border-top-color: transparent; border-bottom-color: rgba(12,35,64,0.97);
+  }
+
+  /* ───── ORBIT RING ───── */
+  #orbitRing {
+    transition: stroke 0.3s, stroke-opacity 0.3s, stroke-width 0.3s, filter 0.3s;
+  }
+  #orbitRing.orbit-glow {
+    stroke: #EF9F27;
+    stroke-opacity: 0.7;
+    stroke-width: 1.5;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px rgba(239,159,39,0.9)) drop-shadow(0 0 12px rgba(239,159,39,0.5));
+  }
+
+  /* ───── HOVER CONNECTOR ───── */
+  @keyframes dashFlow {
+    to { stroke-dashoffset: -52; }
+  }
+  #hoverConnector[opacity="1"] {
+    animation: dashFlow 1.1s linear infinite;
+  }
+  /* CMC glows when an agent is hovered */
+  .cmc-wrapper.agent-hover .cpu-pins {
+    filter: drop-shadow(0 0 18px rgba(239,159,39,0.55)) drop-shadow(0 0 8px rgba(239,159,39,0.35));
+  }
+  .cmc-chip.agent-hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92),
+      0 0 50px rgba(239,159,39,0.55), 0 0 22px rgba(239,159,39,0.35);
+    transition: box-shadow 0.25s;
+  }
+
+  /* ───── CANOPY AGENT HOVER → cyan CMC glow ───── */
+  .cmc-wrapper.canopy-hover .cpu-pins {
+    filter: drop-shadow(0 0 20px rgba(0,204,238,0.7)) drop-shadow(0 0 8px rgba(0,204,238,0.45));
+  }
+  .cmc-chip.canopy-hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92),
+      0 0 55px rgba(0,204,238,0.65), 0 0 24px rgba(0,204,238,0.4);
+    transition: box-shadow 0.25s;
+  }
+  /* Canopy lines — dim by default, glow when lit */
+  #canopyLine1, #canopyLine2 {
+    transition: opacity 0.25s;
+  }
+  #canopyLine1.lit, #canopyLine2.lit {
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(0,204,238,1)) drop-shadow(0 0 6px rgba(0,204,238,0.7));
+  }
+
+  /* ───── HINT ───── */
+  .arena-hint {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 10.5px; color: rgba(255,255,255,0.22);
+    white-space: nowrap; z-index: 10; letter-spacing: 0.02em;
+  }
+
+  /* ───── MODAL ───── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(6,17,30,0.8); backdrop-filter: blur(6px);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-card {
+    background: #fff; border-radius: 22px; padding: 40px 44px;
+    max-width: 580px; width: calc(100% - 40px);
+    box-shadow: 0 32px 100px rgba(0,0,0,0.5);
+    position: relative; max-height: 85vh; overflow-y: auto; scrollbar-width: thin;
+  }
+  .modal-close {
+    position: absolute; top: 18px; right: 18px;
+    background: #F0F4F8; border: none; border-radius: 50%;
+    width: 34px; height: 34px; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #617089; transition: background 0.15s;
+  }
+  .modal-close:hover { background: #E0E8F0; color: #0C2340; }
+  .modal-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #8A9BB0; margin-bottom: 10px; }
+  .modal-title { font-size: 26px; font-weight: 800; color: #0C2340; letter-spacing: -0.02em; margin-bottom: 8px; padding-right: 40px; }
+  .modal-subtitle { font-size: 14px; color: #617089; line-height: 1.55; margin-bottom: 22px; }
+  .modal-nodes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .modal-node {
+    background: #EEF2F8; border: 1px solid rgba(12,68,124,0.14);
+    border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: #0C2340;
+  }
+  .modal-divider { height: 1px; background: #EEF2F8; margin-bottom: 20px; }
+  .modal-body p { font-size: 14px; color: #3D4E63; line-height: 1.7; margin-bottom: 14px; }
+  .modal-body p:last-child { margin-bottom: 0; }
+
+  /* ───── LEGEND ───── */
+  .legend { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 28px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: #617089; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <span class="nav-brand-dot"></span>
+    CanopyOS
+  </div>
+  <ul class="nav-links">
+    <li><a href="#what" class="active">What is CanopyOS?</a></li>
+    <li><a href="#why" class="active">Why CanopyOS?</a></li>
+    <li><a href="#how-it-works">How it Works</a></li>
+  </ul>
+  <div class="nav-status">Internal Draft</div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="hero-eyebrow">Internal Enterprise Architecture</p>
+  <h1 class="hero-title">CanopyOS</h1>
+  <p class="hero-tagline">An agnostic, lifecycle-aware, multi-agent digital operating system engineered for commercial construction.</p>
+  <div class="hero-pills">
+    <span class="pill"><i class="ti ti-cpu"></i> Multi-Agent Orchestration</span>
+    <span class="pill"><i class="ti ti-lock"></i> Local / On-Premise</span>
+    <span class="pill"><i class="ti ti-chart-line"></i> S-Curve Lifecycle-Aware</span>
+    <span class="pill"><i class="ti ti-user-check"></i> Human-in-the-Loop</span>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ======================== -->
+  <!-- SECTION 01: WHAT         -->
+  <!-- ======================== -->
+  <section id="what" class="section-wrap">
+    <div class="section-header">
+      <div class="section-eyebrow">Section 01</div>
+      <h2 class="section-title">What is CanopyOS?</h2>
+      <p class="section-sub">Three perspectives — business, field, and technical — defining the system.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <a class="toc-item" href="#p1"><span class="toc-dot"></span>Perspective 1 — Commercial business</a>
+      <a class="toc-item" href="#p2"><span class="toc-dot"></span>Perspective 2 — Field and operations</a>
+      <a class="toc-item" href="#p3"><span class="toc-dot"></span>Perspective 3 — Technical architecture</a>
+    </div>
+
+    <!-- P1 -->
+    <div class="perspective" id="p1">
+      <div class="p-badge"><i class="ti ti-building"></i> Perspective 1</div>
+      <h3 class="p-title">Commercial business</h3>
+      <p class="p-lead">CanopyOS is a digital, multi-agent operating system engineered specifically for a construction project. Think of it as an intelligent, invisible canopy that hovers over your entire job site, connecting every moving piece of data in real time. It functions as a 24/7 central cognitive brain for the project.</p>
+      <p class="p-body">Instead of forcing your valuable project team to spend their 60-hour workweeks copy-pasting data, tracking down missing logs, or chasing architects for critical answers, CanopyOS deploys an internal team of automated "digital employees" to handle the administrative plumbing behind the scenes. It is fully aware of your project schedule and automatically shifts its processing power up or down depending on how chaotic the active phase of construction is.</p>
+      <p class="p-body">Your physical staff remains the ultimate authority, validating the digital work via a natural, human-like voice conversation directly with Canopy, a quick tap on a mobile dashboard, or a simple approval button. This radical operational leverage allows a leaner, elite core team to deliver massive, complex projects without the standard administrative fatigue and burnout.</p>
+    </div>
+
+    <!-- P2 -->
+    <div class="perspective" id="p2">
+      <div class="p-badge"><i class="ti ti-helmet"></i> Perspective 2</div>
+      <h3 class="p-title">Field and operations</h3>
+      <p class="p-lead">CanopyOS is like having an invisible, hyper-intelligent field engineer floating right over the job site, accessible straight from your tablet or phone.</p>
+      <p class="p-body">When you're out in the field and notice an issue or a structural conflict, you don't have to step away from production or walk back to the trailer to resolve it. You simply have a natural, real-time conversation with Canopy and explain what you see. Instantly, its digital sub-agents spring into action — sweeping through thousands of pages of blueprints and contract specifications to isolate the exact contradiction and automatically generate a flawless, professional RFI draft.</p>
+      <p class="p-body">Once the system queues it up, you or your project manager can review the draft right on your screen, modify it via voice if needed, and send it to the architect with a quick approval. From that point on, you never have to manually track it, log it, or try to remember it. CanopyOS continuously watches the clock against your active milestone schedule, autonomously chasing down un-answered items and alerting the team if a delayed response is getting dangerously close to holding up an upcoming trade sequence or concrete pour.</p>
+    </div>
+
+    <!-- P3 -->
+    <div class="perspective" id="p3">
+      <div class="p-badge"><i class="ti ti-cpu"></i> Perspective 3</div>
+      <h3 class="p-title">Technical architecture</h3>
+      <p class="p-lead">CanopyOS is an agnostic, state-driven, multi-agent orchestration infrastructure. Instead of relying entirely on expensive cloud calls to outside foundational labs, the system runs locally on our own secure business unit or job-site servers.</p>
+      <p class="p-body">By deploying private, localized models, we ensure maximum data privacy, near-zero latency, and a much lower total cost of ownership over the project lifecycle. Under the hood, the infrastructure consists of four core layers:</p>
+
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-database"></i></div>
+        <div>
+          <div class="tc-name">Agnostic ingestion engine</div>
+          <div class="tc-desc">Connects directly to internal project repositories and document servers, instantly indexing unstructured data — blueprints, specifications, contract items, and 3D modeling matrices — into a highly optimized, localized RAG mesh.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-chart-line"></i></div>
+        <div>
+          <div class="tc-name">State-driven lifecycle architecture</div>
+          <div class="tc-desc">Explicitly mapped to the project's physical S-curve. Programmatic levers and toggles dynamically scale background processing — specialized sub-agents brought online or hibernated to match active phases: procurement, rough-in, or commissioning.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-users"></i></div>
+        <div>
+          <div class="tc-name">Discipline-specific sub-agents</div>
+          <div class="tc-desc">A coordinated swarm of digital employees — RFI Agent, Submittal & Logistics Agent, Labor & Manpower Agent, and Predictive Safety Agent — each hyper-focused on a single construction domain.</div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tc-icon"><i class="ti ti-shield-check"></i></div>
+        <div>
+          <div class="tc-name">Defense-in-depth integrity gates</div>
+          <div class="tc-desc">Every autonomous output is funneled through a strict multi-model Critic/Arena parallel evaluation pipeline — eliminating confabulation and enforcing data governance before any payload reaches the human-in-the-loop approval endpoint.</div>
+        </div>
+      </div>
+
+      <div class="arch">[ Voice / Tablet Interface in the Field ]
+            |
+            v
+[ CanopyOS Master Orchestrator — Local Secure Server ]
+            |
+   .---------+---------.
+   v         v         v
+[RAG Mesh] [Lifecycle] [Sub-Agent Swarm]
+            |
+            v
+[ Defense-in-Depth Critic / Arena ]
+            |
+            v
+[ Human-In-The-Loop Approval (HITL) ]</div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ======================== -->
+  <!-- SECTION 02: WHY          -->
+  <!-- ======================== -->
+  <section id="why" class="section-wrap" style="padding-bottom: 2rem;">
+    <div class="section-header">
+      <div class="section-eyebrow">Section 02</div>
+      <h2 class="section-title">Why CanopyOS?</h2>
+      <p class="section-sub">The problems this system is engineered to address.</p>
+    </div>
+
+    <!-- Problem Statement Box -->
+    <div class="prob-box">
+      <div class="prob-head">
+        <div class="prob-head-title">What problems would CanopyOS test against?</div>
+        <div class="prob-head-sub">(What problems would CanopyOS try to solve?)</div>
+      </div>
+      <div class="prob-items">
+        <div class="prob-item">
+          <div class="prob-num">1</div>
+          <div class="prob-text">As project volume grows, so does the demand for staffing — and not all of that demand can be met with experienced personnel. Getting new and developing people productive quickly, without overburdening the experienced staff responsible for quality and delivery, is one of the central operational challenges in large-scale commercial construction today.</div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">2</div>
+          <div class="prob-text">Separate from staffing, even a fully experienced project team is managing a volume of information — documents, RFIs, submittals, trade conflicts, schedule dependencies — that is increasingly difficult to move quickly and accurately without a purpose-built system underneath it. Data availability at the point of decision is a direct driver of project outcomes.</div>
+        </div>
+        <div class="prob-item">
+          <div class="prob-num">3</div>
+          <div class="prob-text">When either of these goes unaddressed, the result is rework, schedule compression, and compounding pressure on the people responsible for delivery — costs that are measurable, documented, and growing.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val">92%</div>
+        <div class="stat-label">of commercial construction firms struggling to fill open positions in 2026</div>
+        <div class="stat-source">AGC 2026 Construction Hiring &amp; Business Outlook, Feb 2026 · 951 firms surveyed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">$31B</div>
+        <div class="stat-label">annual U.S. cost of poor project data and miscommunication</div>
+        <div class="stat-source">Autodesk + FMI, Construction Disconnected, 2023</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">~2 days</div>
+        <div class="stat-label">lost per worker per week to avoidable issues and searching for project information</div>
+        <div class="stat-source">Autodesk + FMI, Construction Disconnected, 2023</div>
+      </div>
+    </div>
+
+    <!-- Body Paragraphs -->
+    <div class="why-body">
+      <p class="why-p">The staffing environment in commercial construction is under genuine pressure. The AGC's <em>2026 Construction Hiring and Business Outlook</em> — released in February 2026 and reflecting survey input from 951 firms — found that 92% of commercial construction companies reported difficulty filling open positions, with an estimated 499,000 additional workers needed industrywide.</p>
+
+      <p class="why-p">The challenge is not just headcount — it is experience depth. Historically, well-run projects relied on a strong majority of seasoned staff anchoring the team, with a smaller share of developing people growing into those roles. That balance is shifting. As project volume increases and experienced personnel retire or move out of field roles, jobs are increasingly being staffed with higher proportions of new or still-developing people. Experienced staff absorb that difference — and instead of building and leading, they are teaching, checking, and correcting. That shift has a direct operational cost that rarely shows up on a budget line but always shows up on the schedule.</p>
+
+      <p class="why-p">The staffing challenge collides with a separate but compounding reality: the sheer volume of information that must move correctly on a commercial project. A 2023 joint study by Autodesk and management consulting firm FMI — titled <em>Construction Disconnected</em> — found that construction workers lose nearly two full working days every week resolving avoidable issues and searching for the right project information, with poor communication and bad project data carrying a $31 billion annual price tag for the U.S. industry. A separate 2024 Dodge Data &amp; Analytics report, <em>Not by Design</em>, found that poor collaboration alone erodes roughly 10% of project profit. These are not margin issues. On a $200 million project, 10% is $20 million.</p>
+
+      <p class="why-p">CanopyOS is built to address both problems simultaneously — not by replacing the people responsible for these projects, but by giving them a system that handles the information layer so they can focus on the work only experienced humans can do.</p>
+
+      <div class="bridge">
+        <p>The question is not whether the industry needs this. The data says it does. The question is who builds it first — and whether the system is built with the operational precision the job demands.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p><strong>CanopyOS</strong> — Internal Enterprise Architecture Document<br>
+  David Solomon · Operational Excellence Manager &amp; Systems Engineer<br>
+  Document Date: May 2026 · Status: Architecture Locked / Ready for Internal Proposal</p>
+</footer>
+
+<!-- ======================== -->
+<!-- SECTION 03: HOW IT WORKS -->
+<!-- ======================== -->
+<div id="how-it-works" style="background:#EEF2F8; padding: 64px 20px 80px; display:flex; flex-direction:column; align-items:center;">
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="eyebrow">Phase 03 — How It Works</div>
+  <h1>CanopyOS System Architecture</h1>
+  <p>Nine specialist agents orbit a shared memory core. Every answer is source-grounded, cited, and traceable.</p>
+</div>
+
+<!-- ARENA -->
+<div class="arena-wrap">
+<div class="arena" id="arena">
+
+  <!-- SVG: orbit ring + connectors -->
+  <svg class="arena-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="lineGlow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Orbit path ring — radius 300, CMC center (430, 700) -->
+    <circle id="orbitRing" cx="430" cy="700" r="300"
+      fill="none" stroke="rgba(255,255,255,0.06)"
+      stroke-width="1"/>
+    <!-- Vertical connection: Canopy Agent bottom → CMC chip top -->
+    <line id="canopyLine1" x1="425" y1="285" x2="425" y2="521" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+    <line id="canopyLine2" x1="435" y1="285" x2="435" y2="521" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+  </svg>
+
+  <!-- Document Ingestion -->
+  <div class="ingestion-strip">
+    <div class="ingestion-label">Document Ingestion → Project CMC</div>
+    <div class="ingestion-pills">
+      <span class="ingestion-pill">📐 Drawings</span>
+      <span class="ingestion-pill">📋 Specifications</span>
+      <span class="ingestion-pill">❓ RFIs</span>
+      <span class="ingestion-pill">📦 Submittals</span>
+      <span class="ingestion-pill">📸 Field Photos</span>
+      <span class="ingestion-pill">🎤 Transcripts</span>
+    </div>
+  </div>
+
+  <!-- Canopy Agent -->
+  <div class="canopy-agent">
+    <div class="canopy-title">🌳 &nbsp;Canopy Agent</div>
+    <div class="canopy-sub-name">(each project will give it a name)</div>
+    <div class="canopy-sub">Two-way communication · Natural language</div>
+  </div>
+
+  <!-- Entry -->
+  <div class="mini-system entry">
+    <div class="mini-system-label">Field Users</div>
+    <div class="mini-nodes">
+      <div class="mini-node"><span class="mini-icon">👷</span>Foremen &amp; PMs</div>
+      <div class="mini-node"><span class="mini-icon">📱</span>Mobile / Voice</div>
+      <div class="mini-node"><span class="mini-icon">💬</span>MS Teams · Slack</div>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="mini-system output">
+    <div class="mini-system-label">System Output</div>
+    <div class="mini-nodes">
+      <div class="mini-node"><span class="mini-icon">💬</span>Cited Answers</div>
+      <div class="mini-node"><span class="mini-icon">📄</span>Documents</div>
+      <div class="mini-node"><span class="mini-icon">🔔</span>Alerts &amp; Flags</div>
+    </div>
+  </div>
+
+  <!-- CMC CPU Chip -->
+  <div class="cmc-wrapper">
+
+    <!-- PCB board with circuit traces -->
+    <svg class="cpu-pins" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="tg" x="-200%" y="-200%" width="500%" height="500%">
+          <feGaussianBlur stdDeviation="0.9" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <pattern id="dp" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="4" cy="4" r="0.9" fill="rgba(0,160,210,0.3)"/>
+        </pattern>
+      </defs>
+      <!-- PCB board -->
+      <rect x="38" y="38" width="424" height="424" rx="6" fill="#061420" stroke="rgba(0,160,210,0.38)" stroke-width="1.5"/>
+      <!-- Dot grid strips -->
+      <rect x="38" y="38" width="72" height="424" fill="url(#dp)"/>
+      <rect x="390" y="38" width="72" height="424" fill="url(#dp)"/>
+      <rect x="110" y="38" width="280" height="72" fill="url(#dp)"/>
+      <rect x="110" y="390" width="280" height="72" fill="url(#dp)"/>
+      <!-- BR corner bottom 3 traces -->
+      <path d="M381,390 L393,402 L393,420 L381,432 L381,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M375,390 L387,402 L387,424 L375,436 L375,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M369,390 L381,402 L381,428 L369,440 L369,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BR corner right 3 traces -->
+      <path d="M390,381 L402,393 L420,393 L432,381 L462,381" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,375 L402,387 L424,387 L436,375 L462,375" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,369 L402,381 L428,381 L440,369 L462,369" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner top 3 traces -->
+      <path d="M119,110 L107,98 L107,80 L119,68 L119,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M125,110 L113,98 L113,76 L125,64 L125,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M131,110 L119,98 L119,72 L131,60 L131,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner left 3 traces -->
+      <path d="M110,119 L98,107 L80,107 L68,119 L38,119" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,125 L98,113 L76,113 L64,125 L38,125" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,131 L98,119 L72,119 L60,131 L38,131" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TR corner top 3 traces -->
+      <path d="M381,110 L393,98 L393,80 L381,68 L381,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M375,110 L387,98 L387,76 L375,64 L375,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M369,110 L381,98 L381,72 L369,60 L369,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TR corner right 3 traces -->
+      <path d="M390,119 L402,107 L420,107 L432,119 L462,119" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,125 L402,113 L424,113 L436,125 L462,125" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,131 L402,119 L428,119 L440,131 L462,131" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BL corner bottom 3 traces -->
+      <path d="M119,390 L107,402 L107,420 L119,432 L119,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M125,390 L113,402 L113,424 L125,436 L125,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M131,390 L119,402 L119,428 L131,440 L131,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BL corner left 3 traces -->
+      <path d="M110,381 L98,393 L80,393 L68,381 L38,381" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,375 L98,387 L80,387 L68,375 L38,375" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,369 L98,381 L80,381 L68,369 L38,369" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- Bottom 7 center traces -->
+      <line x1="250" y1="390" x2="250" y2="462" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="236" y1="462" x2="236" y2="430" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="264" y1="462" x2="264" y2="430" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <path d="M222,390 L212,400 L212,418 L222,428 L222,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M208,390 L196,402 L196,422 L208,434 L208,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M278,390 L288,400 L288,418 L278,428 L278,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M292,390 L304,402 L304,422 L292,434 L292,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- Top 7 center traces -->
+      <line x1="250" y1="110" x2="250" y2="38" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="236" y1="38" x2="236" y2="70" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="264" y1="38" x2="264" y2="70" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <path d="M222,110 L212,100 L212,82 L222,72 L222,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M208,110 L196,98 L196,78 L208,66 L208,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M278,110 L288,100 L288,82 L278,72 L278,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M292,110 L304,98 L304,78 L292,66 L292,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner L-bracket + raised square -->
+      <line x1="96" y1="96" x2="38" y2="96" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="96" y1="96" x2="96" y2="38" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="59" y="60" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="57" y="57" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="57" y1="57" x2="77" y2="57" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="57" y1="57" x2="57" y2="77" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="76" y1="58" x2="76" y2="77" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="58" y1="76" x2="77" y2="76" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- TR corner L-bracket + raised square -->
+      <line x1="404" y1="96" x2="462" y2="96" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="404" y1="96" x2="404" y2="38" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="423" y="60" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="423" y="57" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="423" y1="57" x2="443" y2="57" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="423" y1="57" x2="423" y2="77" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="442" y1="58" x2="442" y2="77" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="424" y1="76" x2="443" y2="76" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- BL corner L-bracket + raised square -->
+      <line x1="96" y1="404" x2="38" y2="404" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="96" y1="404" x2="96" y2="462" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="59" y="424" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="57" y="423" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="57" y1="423" x2="77" y2="423" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="57" y1="423" x2="57" y2="443" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="76" y1="424" x2="76" y2="443" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="58" y1="442" x2="77" y2="442" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- BR corner L-bracket + raised square -->
+      <line x1="404" y1="404" x2="462" y2="404" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="404" y1="404" x2="404" y2="462" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="427" y="429" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="425" y="426" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="425" y1="426" x2="445" y2="426" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="425" y1="426" x2="425" y2="446" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="444" y1="427" x2="444" y2="446" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="426" y1="445" x2="445" y2="445" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+    </svg>
+
+    <div class="cmc-chip" id="cmcCircle">
+
+    <div class="cmc-default" id="cmcDefault">
+      <div class="cmc-header">
+        <div class="cmc-header-title">Compiled Memory Core</div>
+      </div>
+      <div class="scope-tiers">
+        <button class="scope-chip t1" onclick="openTierModal(0)">① Project</button>
+        <button class="scope-chip t2" onclick="openTierModal(1)">② Org</button>
+        <button class="scope-chip t3" onclick="openTierModal(2)">③ Reference</button>
+      </div>
+      <div class="cmc-band band-source" onclick="openBandModal('sourceTruth')">
+        <div class="band-name">Source Truth Band</div>
+        <div class="band-nodes">
+          <span class="band-pill">Source Ledger</span>
+          <span class="band-pill">Raw Files</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-compile" onclick="openBandModal('compilation')">
+        <div class="band-name">Compilation Band</div>
+        <div class="band-nodes">
+          <span class="band-pill">Capture</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Index</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Compilers</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">CMC</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-retriev" onclick="openBandModal('retrieval')">
+        <div class="band-name">Retrieval Band &nbsp;<span style="font-size:8px;font-weight:700;color:#0a7a6a;background:rgba(0,200,160,0.13);border-radius:4px;padding:1px 6px;letter-spacing:0.04em;">2–4s end-to-end</span></div>
+        <div class="band-nodes">
+          <span class="band-pill">Surfaces</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Orchestrator</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Evidence Pack</span>
+        </div>
+        <div class="ep-strip">
+          <span class="ep-badge">Evidence Pack →</span>
+          <span class="hitl-badge">HITL Gate</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-sleep" onclick="openBandModal('sleep')">
+        <div class="sleep-text">⟳ &nbsp;Sleep · Consolidation &nbsp;·&nbsp; Background rebuild · Contradiction checks · Stale cleanup</div>
+      </div>
+    </div>
+
+    <!-- Agent detail panel — disabled -->
+    <div class="cmc-agent-panel" id="cmcAgentPanel" style="display:none;">
+      <button class="ap-close-btn" onclick="closeAgentPanel()">✕</button>
+      <div class="ap-body">
+        <div class="ap-icon" id="apIcon"></div>
+        <div class="ap-name" id="apName"></div>
+        <div class="ap-tagline" id="apTagline"></div>
+        <div class="ap-desc" id="apDesc"></div>
+        <div class="ap-cmc-label">CMC Relationship</div>
+        <div class="ap-cmc-rule"></div>
+        <div class="ap-cmc-text" id="apCmc"></div>
+      </div>
+    </div>
+
+  </div><!-- /cmc-chip -->
+  </div><!-- /cmc-wrapper -->
+
+  <!-- Agent nodes injected by JS -->
+
+  <div class="arena-hint">Click any agent to explore · Click CMC bands or scope chips for detail · All answers ship with source citations</div>
+
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
+  <div class="modal-card" id="modalCard">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-tag" id="modalTag"></div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-subtitle" id="modalSubtitle"></div>
+    <div class="modal-nodes" id="modalNodes"></div>
+    <div class="modal-divider" id="modalDivider"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Shared floating tooltip -->
+<div id="agentTooltip"></div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(186,117,23,0.6);border:1.5px solid rgba(186,117,23,0.9)"></div>
+    Canopy Agent
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#fff;border:1.5px solid rgba(124,141,168,0.5)"></div>
+    Specialist Agent — click to explore
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#EEEAFE;border:1.5px solid rgba(124,141,168,0.4)"></div>
+    Compiled Memory Core — click bands for detail
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#FFF1DF;border:1.5px solid rgba(186,117,23,0.4)"></div>
+    Evidence Pack (every answer cited)
+  </div>
+</div>
+
+</div><!-- /how-it-works -->
+
+<script>
+'use strict';
+
+// ── AGENT DATA ──────────────────────────────────────────────
+const AGENTS = [
+  {
+    id: 'document', icon: '📄', name: 'Document Agent', tagline: 'Project CMC Owner',
+    shortDesc: 'Document Agent is the foundation of CanopyOS. Every drawing, spec, bulletin, ASI, RFI response, submittal, field photo, and transcript enters the system here — versioned, fingerprinted, and compiled into the Project CMC. No other agent can present a fact without a source Document Agent sealed. When a revision comes in, it pushes change alerts to every sibling agent whose domain was touched.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">project-indexer.skill</span><span class="tip-dim"> — indexes project folder, splits drawings from documents</span></div><div class="tip-breakdown-row"><span class="tip-skill">drawings-analyser.skill</span><span class="tip-dim"> — per-sheet analysis, symbol library, cross-reference graph</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Source Truth Band (immutable ledger) · Compilation Band (all typed claims)</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Ingestion Sub-agent</span><span class="tip-dim"> — receives, OCRs, classifies, fingerprints incoming files</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Drawing Analyser</span><span class="tip-dim"> — per-sheet processing, symbol extraction, cross-reference graph</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Change Alert Sub-agent</span><span class="tip-dim"> — watches for revisions, pushes alerts to sibling agents</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Compilation Sub-agent</span><span class="tip-dim"> — runs domain compilers, seals the Source Ledger</span></div></div>',
+    desc: 'Ingests and processes every project source document — drawings, specifications, addenda, RFI responses, submittals, and field photos. Owns the Project CMC. Every document enters the system through this agent\'s compilation pipeline. Nothing reaches other agents without passing through Document Agent first.',
+    cmc: 'Primary writer to the Project CMC. Runs every source document through the full Compilation Band — OCR, chunking, classification, and fingerprinting. Seals the immutable Source Ledger with cryptographic hashes. All other agents query what Document Agent compiled.',
+  },
+  {
+    id: 'rfi', icon: '❓', name: 'RFI Agent', tagline: 'Information Requests',
+    shortDesc: 'Questions come from the field, from your engineers, from trade contractors — anyone who hits something the drawings or specs don\'t resolve. RFI Agent checks the project CMC first. If the answer isn\'t there, it recommends an RFI, drafts it for your review and approval, and routes it to the right design consultant. From there it owns the log — tracking the response window, sending deadline reminders to the architect, and looping back to your team if more clarification is needed before the answer closes.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">rfi-drafter.skill</span><span class="tip-dim"> — draft, format, route</span></div><div class="tip-breakdown-row"><span class="tip-lbl">Reference CMC</span><span class="tip-dim"> — domain knowledge (the engineering "why")</span></div><div class="tip-breakdown-row"><span class="tip-lbl">Project CMC</span><span class="tip-dim"> — project-specific facts, contacts, log</span></div></div>',
+    desc: 'Drafts, routes, and tracks Requests for Information. Monitors turnaround windows and flags RFIs that are stalled or at risk of impacting field work before the required answer date. An RFI processing normally through its window is not a constraint — it becomes one only when the window is threatened.',
+    cmc: 'Reads the Compilation Band to identify gaps in project documentation. Writes resolved RFI answers back to the Project CMC as source-grounded claims. Escalates stalled RFIs to the Constraint Agent when turnaround windows are threatened.',
+  },
+  {
+    id: 'change', icon: '🔄', name: 'Change Mgmt', tagline: 'Change Events',
+    shortDesc: 'Change Management Agent owns the full change lifecycle — from the first signal that something has changed (a revised drawing, an owner directive, an RFI response that adds scope) through PCO creation, pricing, Time Impact Analysis, formal submission to the owner, executed change orders, and commitment change orders back to every affected sub. Every step is logged, timestamped, and traceable. Missing a notice deadline forfeits the right to claim — this agent makes sure that never happens.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">contract-administrator.skill</span><span class="tip-dim"> — notice deadlines, clause citations</span></div><div class="tip-breakdown-row"><span class="tip-skill">site-report.skill</span><span class="tip-dim"> — detects change triggers from field notes &amp; voice</span></div><div class="tip-breakdown-row"><span class="tip-skill">line-item-pricing.skill</span><span class="tip-dim"> — full cost stack assembly</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — RFI Log · Drawing revisions · Contract · Schedule</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Change Event Log · PCO Log · CO Log · Commitment Log</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Trigger Detector</span><span class="tip-dim"> — watches all project data for change signals</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> PCO Manager</span><span class="tip-dim"> — creates, prices, and tracks Potential Change Orders</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> TIA Sub-agent</span><span class="tip-dim"> — schedule impact analysis, critical path fragnet</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Log Manager</span><span class="tip-dim"> — PCO log, CO log, Commitment log, Contingency tracker</span></div></div>',
+    desc: 'Detects, prices, and tracks change events. Monitors the project for scope changes, unforeseen conditions, and owner-directed modifications. Maintains the change log and links every event to its schedule and cost impacts.',
+    cmc: 'Reads drawing and spec data from Project CMC to identify design changes. Writes change event records with cost and schedule impacts back to the CMC. Coordinates with the Scheduling Agent for time impact analysis.',
+  },
+  {
+    id: 'cil', icon: '📦', name: 'CIL Agent', tagline: 'Submittals & Procurement',
+    shortDesc: 'Manages the Contract Items List and submittal lead times.',
+    desc: 'Manages the Contract Items List — the authoritative forecast of material and submittal lead times mapped against the contract schedule. Tracks every submittal through review and approval cycles. A CIL item tracking normally through its process is not a constraint — it becomes one only when something in its chain goes uncertain or off-track.',
+    cmc: 'Reads schedule and spec data from Project CMC to maintain the CIL forecast. Writes submittal status and lead time revisions. Escalates to the Constraint Agent when a CIL item\'s resolution chain breaks down.',
+  },
+  {
+    id: 'production', icon: '📊', name: 'Production Agent', tagline: 'Field Progress',
+    shortDesc: 'Tracks installed quantities vs. as-designed scope.',
+    desc: 'Tracks installed quantities and field progress against the as-designed scope. Surfaces production variances — where work is ahead, behind, or blocked. Provides real-time status against the Takt and CPM schedules.',
+    cmc: 'Reads as-designed scope from Project CMC and actual progress from field reports. Writes production metrics and variance records. Feeds actuals into the Scheduling Agent\'s weekly lookahead update cycle.',
+  },
+  {
+    id: 'code', icon: '📋', name: 'Code Agent', tagline: 'Codes & Standards',
+    shortDesc: 'Owns the Reference CMC — codes, standards, jurisdictional data.',
+    desc: 'Owns the Reference CMC — building codes, manufacturer data, industry standards, and jurisdictional references. Answers compliance questions grounded in the current edition of the applicable standard. Compliance is a sub-agent under Code Agent, not a standalone agent.',
+    cmc: 'Primary writer to the Reference CMC. Maintains edition, jurisdiction, and date metadata for all reference sources. Compliance sub-agent runs code-check logic against Project CMC data. All citations include exact edition and section — no paraphrasing.',
+  },
+  {
+    id: 'safety', icon: '⚠️', name: 'Safety Agent', tagline: 'Hazard Management',
+    shortDesc: 'Identifies hazards, tracks safety observations and incidents.',
+    desc: 'Identifies hazards, tracks safety observations, and manages incident reporting. Monitors the work plan for activities with elevated risk. Generates Pre-Task Plans and safety alerts ahead of hazardous operations. Cross-references OSHA and jurisdictional standards for every alert.',
+    cmc: 'Reads work scope, activity sequences, and material data from Project CMC to generate hazard assessments. Writes safety observations and incident records with source spans. Cross-references OSHA standards via Reference CMC.',
+  },
+  {
+    id: 'scheduling', icon: '📅', name: 'Scheduling Agent', tagline: 'Takt + CPM Planning',
+    shortDesc: 'Maintains the 6–8 week lookahead and full contract schedule.',
+    desc: 'Maintains two live schedule views, updated weekly against plan vs. actual: the 6–8 week Takt lookahead and the full CPM contract schedule. Tracks plan vs. actual for both. Surfaces float erosion, critical path shifts, and missed milestones.',
+    cmc: 'Reads production actuals from Production Agent and constraint closures from Constraint Agent. Writes updated schedule records — both lookahead and CPM baselines — to Project CMC. Constraint Agent always queries the latest version of both schedule views.',
+  },
+  {
+    id: 'constraint', icon: '🔒', name: 'Constraint Agent', tagline: 'Constraint Mining',
+    shortDesc: 'The Constraint Agent vets possible constraints: it searches the CMC, drawings, RFI log, and submittals to see if the answer already exists. If it finds a resolution, the constraint never hits the log. If it confirms the constraint is real, it goes to a human for approval before logging — HITL gate. Once on the log it\'s managed ruthlessly: every constraint has a responsible contractor, a responsible person, and a Date Needed By. The agent tracks each one through closure, sends deadline reminders to the responsible party as the Date Needed By approaches, escalates to the right meeting when closure is at risk, and removes it from the log when it\'s resolved.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — Lookahead · Contract Schedule · RFI Log · Submittals · Drawings · Change Events</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Constraint Log · responsible party · Date Needed By · escalation routing</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Constraint Vetter</span><span class="tip-dim"> — researches each proposed constraint before it hits the log</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Log Manager</span><span class="tip-dim"> — owns all columns, tracks status meeting to meeting</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Deadline Notifier</span><span class="tip-dim"> — sends reminders to responsible parties as Date Needed By approaches</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Escalation Router</span><span class="tip-dim"> — Make-Ready → Constraint Meeting → OAC → OM Huddle</span></div></div>',
+    desc: 'Proactively mines the 6–8 week lookahead for unknowns and uncertainties that will stop planned work. Owns the Constraint Log. Calculates Date Needed By by walking the resolution chain backwards from the Ready-on-Job date — accounting for decisions, fabrication time, delivery, inspections, and approvals.',
+    cmc: 'Reads lookahead and contract schedule from Scheduling Agent. Reads RFI status, CIL chain data, and open change events from sibling agents via Project CMC. Writes constraint records with Date Needed By, responsible party, and escalation routing.',
+  },
+];
+
+// ── BAND DATA ───────────────────────────────────────────────
+const BANDS = {
+  sourceTruth: {
+    tag: 'CMC Architecture · Write Path',
+    title: 'Source Truth Band',
+    subtitle: 'Immutable. Every source document sealed with a cryptographic hash at ingestion. Nothing here is ever edited.',
+    nodes: ['Immutable Source Ledger', 'Raw Source Files'],
+    body: [
+      'The Source Truth Band is the foundation of the entire CMC. Every document ingested — drawings, specifications, RFI responses, submittals, field photos, meeting transcripts — is stored here with its hash, page spans, coordinates, timestamp, and provenance sealed permanently at the moment of ingestion.',
+      'The Source Ledger is append-only. Nothing is edited or deleted. When a document is superseded by a new revision, the new version is added with a pointer to its predecessor; the prior version remains, marked stale. Every claim anywhere in the system traces back to a specific byte range in a specific file stored here.',
+      'Hard rule: No agent can present a fact without at least one source span pointing to a record in this band. This is the contract between CanopyOS and its users.',
+    ],
+  },
+  compilation: {
+    tag: 'CMC Architecture · Write Path',
+    title: 'Compilation Band',
+    subtitle: 'Write path — slow, background processing that transforms raw sources into structured, queryable knowledge.',
+    nodes: ['Capture Layer', 'Hippocampal Index', 'Domain Compilers', 'Memory Compiler', 'Compiled Memory Core'],
+    body: [
+      'Capture Layer: Ingests raw files via OCR, structured parsing, chunking, classification, and fingerprinting. Raw files become typed, located, structured data ready for indexing.',
+      'Hippocampal Index: Binds entities, locations, time references, and relationships across all ingested sources. Builds the contextual graph that lets agents ask cross-document questions — "what do the drawings, specs, and RFIs say about this wall intersection?"',
+      'Domain Compilers: Specialist compilers for each document type — Spec Book, Drawing set, RFI log, CIL, Change Events, Schedule, Meeting Minutes. Each applies domain-specific extraction logic.',
+      'Memory Compiler: Extracts claims from Domain Compiler output, normalizes, deduplicates, reconciles conflicts, assigns derivation types (extracted / normalized / inferred / calculated / human_confirmed), and marks uncertainty.',
+      'Compiled Memory Core: The output — source-grounded claims, entities, rules, procedures, and summaries. Every item is typed and traceable to the Source Ledger.',
+    ],
+  },
+  retrieval: {
+    tag: 'CMC Architecture · Read Path',
+    title: 'Retrieval Band (CMC\'s RAG)',
+    subtitle: 'Total response time: 2–4 seconds end-to-end. The retrieval path itself completes in under 300ms. Every answer ships with an Evidence Pack containing full source citations.',
+    nodes: ['Derived Retrieval Surfaces', 'Retrieval Orchestrator', 'Evidence Pack', 'HITL Gate', 'Agent Answer'],
+    body: [
+      'How fast is this? The full retrieval path — query parsing, parallel index queries across all surfaces, Evidence Pack assembly — completes in under 300 milliseconds. The user-perceived response time is 2–4 seconds total, almost entirely determined by the time the language model takes to compose a cited answer from the Evidence Pack. That is the speed of a fast web search. The difference: the system returns a sourced, cited answer with page-level provenance — not a list of links to go read. Without CanopyOS, the same question routed to a PM or architect takes hours to days.',
+      'Derived Retrieval Surfaces: Multiple specialized indexes built from the Compiled Memory Core — keyword index, vector index, knowledge graph, timelines, structured tables, and pre-warmed caches. Each surface is optimized for different query types and updated incrementally as the CMC changes. Queries run across relevant surfaces in parallel, not in sequence.',
+      'Retrieval Orchestrator: Receives the agent query, selects the right surface(s), executes in parallel, and assembles an Evidence Pack. Applies scope precedence (Project CMC → Organization CMC → Reference CMC) and ranks results by confidence. This step typically takes 50–150ms.',
+      'Evidence Pack: The atomic output unit. Every pack contains: claim text, source span (page, section, character offset), confidence level (high/medium/low/unknown), derivation type, freshness status, and any known conflicts. No agent presents a claim without a complete Evidence Pack.',
+      'HITL Gate: Not triggered on every query — only on high-stakes memory state transitions such as conflict resolution, material change alerts, or high-confidence promotions. When not triggered, pass-through is near-instant. When triggered, a human confirms before the state change becomes active. This is a memory status gate, not a file edit.',
+      '<span style="color:#0C447C !important; font-style:italic; display:block;"><strong>Where RAG lives:</strong> The Retrieval Band is RAG. Retrieval Augmented Generation is exactly what\'s happening when the Retrieval Orchestrator queries the surfaces, assembles an Evidence Pack, and hands it to the agent to generate a cited answer. That\'s the textbook RAG loop — retrieve relevant context, augment the prompt, generate the response.<br><br><strong>Where CanopyOS goes further than standard RAG:</strong> Standard RAG is: embed documents → store in a vector database → similarity search → stuff chunks into a prompt → generate answer. It\'s fast to build and works reasonably well for simple Q&amp;A. The problems show up in construction:<br><ul style="margin:8px 0 8px 20px; padding:0;"><li style="margin-bottom:6px;">It has no memory of what changed. A new drawing revision gets ingested and the old chunks are still in there competing for retrieval.</li><li style="margin-bottom:6px;">It has no provenance chain. You get an answer but can\'t trace it to a specific page, section, or revision.</li><li style="margin-bottom:6px;">It treats all content as equal. A superseded spec section ranks the same as the current one.</li><li style="margin-bottom:6px;">It can\'t reason across document types. Connecting a drawing detail to an RFI response to a submittal approval requires understanding relationships, not just similarity.</li></ul><strong>What the CMC adds on top of RAG:</strong> The Compilation Band — the Hippocampal Index, Domain Compilers, Memory Compiler — is what turns raw documents into structured, typed, versioned, conflict-checked knowledge before retrieval ever happens. By the time a query hits the Retrieval Band, it\'s not searching raw chunks. It\'s querying compiled, source-grounded claims with freshness status, confidence levels, and known conflicts already flagged.<br><br>So the honest answer: CanopyOS contains RAG, but RAG is the read path only. The CMC is what makes that retrieval trustworthy enough to put in front of an owner or use to make field decisions. Standard RAG without the compilation layer would be a liability in construction — you\'d be retrieving from a pile of unreconciled documents with no way to know if what came back is current, superseded, or contradicted somewhere else in the stack.</span>',
+    ],
+  },
+  sleep: {
+    tag: 'CMC Architecture · Maintenance',
+    title: 'Sleep · Consolidation',
+    subtitle: 'Background maintenance cycle — runs continuously, invisible to users. Keeps the CMC fresh, consistent, and contradiction-free.',
+    nodes: [],
+    body: [
+      'Delta compilation: Re-processes changed or newly ingested documents without triggering a full rebuild. Only affected portions of the CMC are recompiled, keeping the system responsive even on large, document-heavy projects.',
+      'Contradiction detection: Scans all compiled claims for cross-source conflicts. When contradictions are found they are surfaced — never silently resolved. Conflicting claims remain in the CMC marked with conflict status until a human confirms resolution through the HITL gate.',
+      'Stale memory cleanup: When a source document is superseded, all claims derived from it are marked stale. Freshness metadata propagates through the dependency graph to any downstream claims.',
+      'Deduplication: Identifies near-duplicate claims from multiple sources and consolidates them while preserving all original citations. No source reference is ever discarded.',
+      'Graph maintenance: Updates the Hippocampal Index as new relationships emerge from incoming documents. Dependency links between entities are continuously refined.',
+    ],
+  },
+};
+
+// ── SCOPE TIER DATA ──────────────────────────────────────────
+const TIERS = [
+  {
+    tag: 'Scope Hierarchy · Highest Precedence',
+    title: 'Project CMC',
+    subtitle: 'Per-construction-project. Authoritative for all project-specific facts. Always consulted first.',
+    nodes: ['Drawings', 'Specifications', 'RFI Responses', 'Submittals', 'Change Orders', 'Field Reports', 'Meeting Minutes'],
+    body: [
+      'The Project CMC is the authoritative memory for a specific construction project. It contains all project-specific source documents and the compiled knowledge derived from them.',
+      'When any agent answers a question, the Project CMC is always consulted first and its content takes precedence over Organization CMC or Reference CMC — even when a company SOP or a code section says something different. The project documents govern.',
+      'Owned by the Document Agent. Every document that enters a project is processed through Document Agent\'s compilation pipeline and stored here with full source provenance.',
+    ],
+  },
+  {
+    tag: 'Scope Hierarchy · Advisory',
+    title: 'Organization CMC',
+    subtitle: 'Company memory. Advisory — supplements Project CMC when no project-specific answer exists. Never overrides.',
+    nodes: ['Standard Operating Procedures', 'Document Templates', 'Lessons Learned', 'Preferred Practices'],
+    body: [
+      'The Organization CMC holds the company\'s accumulated institutional knowledge — standard operating procedures, document templates, lessons learned from prior projects, and preferred construction practices.',
+      'It is strictly advisory. It fills gaps when the Project CMC doesn\'t contain a specific answer, but it never overrides project documentation. If a project spec contradicts a company SOP, the spec governs.',
+      'Typically maintained at the company level, not by individual project teams. Content added here becomes available to all projects within the organization.',
+    ],
+  },
+  {
+    tag: 'Scope Hierarchy · External Reference',
+    title: 'Reference CMC',
+    subtitle: 'External authorities: codes, standards, manufacturer data, jurisdictional requirements. Owned by Code Agent.',
+    nodes: ['Building Codes', 'OSHA Regulations', 'Manufacturer Technical Data', 'Industry Standards (ACI, AISC, ASTM)', 'Jurisdictional Requirements'],
+    body: [
+      'The Reference CMC holds external authoritative references: building codes, OSHA regulations, manufacturer technical data, industry standards, and jurisdiction-specific requirements.',
+      'Owned by the Code Agent, which maintains edition, jurisdiction, and effective-date metadata for every reference. When a code changes editions, the new version is added alongside the prior edition (marked superseded). Both remain queryable — useful when a project was permitted under a prior code cycle.',
+      'The lowest precedence tier. Project CMC and Organization CMC both take precedence when they contain relevant answers. Reference CMC answers are always cited with the exact edition, section number, and effective date.',
+    ],
+  },
+];
+
+// ── ORBITAL ANIMATION ────────────────────────────────────────
+const ORBIT_R = 300;
+const CX = 430, CY = 700;
+const HALF = 46;          // half of 93px node
+const PERIOD = 34000;     // 34s per full revolution
+
+let orbitAngle = 0;
+let prevTs = null;
+let paused = false;   // true when agent is selected (clicked)
+let hovering = false; // true when mouse is over any agent node
+let modalOpen = false; // true when any modal is open
+let activeAgent = null;
+
+function buildAgentNodes() {
+  const arena = document.getElementById('arena');
+  AGENTS.forEach(ag => {
+    const el = document.createElement('div');
+    el.className = 'agent-node';
+    el.id = 'ag-' + ag.id;
+    el.innerHTML =
+      '<div class="agent-bubble">' +
+        '<div class="a-icon">' + ag.icon + '</div>' +
+        '<div class="agent-name-lbl">' + ag.name + '</div>' +
+      '</div>' +
+      '<div class="agent-tip">' + ag.shortDesc + '</div>';
+    // click panel disabled — hover tooltip only
+    el.addEventListener('mouseenter', () => {
+      hovering = true;
+      document.querySelector('.cmc-wrapper').classList.add('agent-hover');
+      document.getElementById('cmcCircle').classList.add('agent-hover');
+      document.getElementById('orbitRing').classList.add('orbit-glow');
+      // Position shared fixed tooltip
+      const tip = document.getElementById('agentTooltip');
+      tip.innerHTML = ag.shortDesc;
+      const rect = el.getBoundingClientRect();
+      const TIP_W = 580, GAP = 12, ARROW = 6;
+      const left = Math.min(Math.max(rect.left + rect.width/2 - TIP_W/2, 8), window.innerWidth - TIP_W - 8);
+      const spaceAbove = rect.top;
+      if (spaceAbove > 200) {
+        // Show above
+        tip.className = 'tip-above';
+        tip.style.left = left + 'px';
+        tip.style.top = '';
+        tip.style.bottom = (window.innerHeight - rect.top + GAP) + 'px';
+      } else {
+        // Show below
+        tip.className = 'tip-below';
+        tip.style.left = left + 'px';
+        tip.style.bottom = '';
+        tip.style.top = (rect.bottom + GAP) + 'px';
+      }
+      requestAnimationFrame(() => tip.classList.add('visible'));
+    });
+    el.addEventListener('mouseleave', () => {
+      hovering = false;
+      document.querySelector('.cmc-wrapper').classList.remove('agent-hover');
+      document.getElementById('cmcCircle').classList.remove('agent-hover');
+      document.getElementById('orbitRing').classList.remove('orbit-glow');
+      const tip = document.getElementById('agentTooltip');
+      tip.classList.remove('visible');
+    });
+    arena.appendChild(el);
+  });
+}
+
+function positionAgents(a) {
+  AGENTS.forEach((ag, i) => {
+    const theta = a + (2 * Math.PI / AGENTS.length) * i - Math.PI / 2;
+    const x = CX + ORBIT_R * Math.cos(theta);
+    const y = CY + ORBIT_R * Math.sin(theta);
+    const el = document.getElementById('ag-' + ag.id);
+    if (!el) return;
+    el.style.left = (x - HALF) + 'px';
+    el.style.top  = (y - HALF) + 'px';
+    // Tooltip points down when agent is in upper arena half
+    el.classList.toggle('tip-below', y > CY);
+  });
+}
+
+function raf(ts) {
+  if (prevTs === null) prevTs = ts;
+  if (!paused && !hovering && !modalOpen) orbitAngle += (2 * Math.PI / PERIOD) * (ts - prevTs);
+  prevTs = ts;
+  positionAgents(orbitAngle);
+  requestAnimationFrame(raf);
+}
+
+// ── AGENT CLICK ──────────────────────────────────────────────
+function clickAgent(id) {
+  if (activeAgent === id) { closeAgentPanel(); return; }
+  if (activeAgent) document.getElementById('ag-' + activeAgent).classList.remove('selected');
+  activeAgent = id;
+  document.getElementById('ag-' + id).classList.add('selected');
+  paused = true;
+
+  const ag = AGENTS.find(a => a.id === id);
+  document.getElementById('apIcon').textContent    = ag.icon;
+  document.getElementById('apName').textContent    = ag.name;
+  document.getElementById('apTagline').textContent = ag.tagline;
+  document.getElementById('apDesc').textContent    = ag.desc;
+  document.getElementById('apCmc').textContent     = ag.cmc;
+
+  document.getElementById('cmcDefault').classList.add('hidden');
+  document.getElementById('cmcAgentPanel').classList.add('visible');
+}
+
+function closeAgentPanel() {
+  if (activeAgent) {
+    document.getElementById('ag-' + activeAgent).classList.remove('selected');
+    activeAgent = null;
+  }
+  document.getElementById('cmcAgentPanel').classList.remove('visible');
+  document.getElementById('cmcDefault').classList.remove('hidden');
+  paused = false;
+}
+
+// ── MODALS ───────────────────────────────────────────────────
+function openBandModal(key)  { showModal(BANDS[key]); }
+function openTierModal(idx)  { showModal(TIERS[idx]); }
+
+function showModal(d) {
+  if (!d) return;
+  document.getElementById('modalTag').textContent      = d.tag;
+  document.getElementById('modalTitle').textContent    = d.title;
+  document.getElementById('modalSubtitle').textContent = d.subtitle;
+
+  const nodesEl = document.getElementById('modalNodes');
+  nodesEl.innerHTML = '';
+  if (d.nodes && d.nodes.length) {
+    d.nodes.forEach(n => {
+      const s = document.createElement('span');
+      s.className = 'modal-node';
+      s.textContent = n;
+      nodesEl.appendChild(s);
+    });
+    document.getElementById('modalDivider').style.display = 'block';
+  } else {
+    document.getElementById('modalDivider').style.display = 'none';
+  }
+
+  const bodyEl = document.getElementById('modalBody');
+  bodyEl.innerHTML = '';
+  (d.body || []).forEach(para => {
+    const p = document.createElement('p');
+    if (para.startsWith('<')) {
+      p.innerHTML = para;
+    } else {
+      p.textContent = para;
+    }
+    bodyEl.appendChild(p);
+  });
+
+  modalOpen = true;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  modalOpen = false;
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function onOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('modalOverlay').classList.contains('open')) { closeModal(); return; }
+  if (activeAgent) closeAgentPanel();
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildAgentNodes();
+  requestAnimationFrame(raf);
+
+  // Canopy Agent hover — cyan glow on lines + CMC
+  const canopyEl = document.querySelector('.canopy-agent');
+  const cmcWrapper = document.querySelector('.cmc-wrapper');
+  const cmcChip = document.getElementById('cmcCircle');
+  const line1 = document.getElementById('canopyLine1');
+  const line2 = document.getElementById('canopyLine2');
+  canopyEl.addEventListener('mouseenter', () => {
+    cmcWrapper.classList.add('canopy-hover');
+    cmcChip.classList.add('canopy-hover');
+    line1.classList.add('lit');
+    line2.classList.add('lit');
+  });
+  canopyEl.addEventListener('mouseleave', () => {
+    cmcWrapper.classList.remove('canopy-hover');
+    cmcChip.classList.remove('canopy-hover');
+    line1.classList.remove('lit');
+    line2.classList.remove('lit');
+  });
+});
+</script>
+</body>
+</html>
