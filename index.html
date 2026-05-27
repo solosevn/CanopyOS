@@ -6,7 +6,7 @@
 <title>CanopyOS — Multi-Agent Digital Operating System for Commercial Construction</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -83,7 +83,12 @@
     transition: color 0.15s, border-color 0.15s;
   }
   .nav-links a:hover { color: var(--navy); }
-  .nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
+  .nav-links a.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+    font-weight: 600;
+    text-shadow: 0 0 12px rgba(239,159,39,0.55), 0 0 4px rgba(239,159,39,0.4);
+  }
   .nav-status {
     font-size: 11px;
     background: var(--gold-wash);
@@ -270,6 +275,67 @@
   .tc-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
   .tc-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
+  /* Expandable CMC card */
+  .tc-hint {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--gold);
+    margin: 14px 0 6px 8px;
+    letter-spacing: 0.02em;
+  }
+  .tc-expandable {
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    border: 1.5px solid var(--border);
+  }
+  .tc-expandable:hover {
+    border-color: rgba(239,159,39,0.7);
+    box-shadow: 0 0 28px rgba(239,159,39,0.35), 0 0 10px rgba(239,159,39,0.22);
+    transform: translateY(-1px);
+  }
+
+  /* CMC expansion modal */
+  .cmc-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(6,17,30,0.82); backdrop-filter: blur(6px);
+    z-index: 200000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    padding: 40px 20px;
+  }
+  .cmc-modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .cmc-modal-card {
+    background: #fff; border-radius: 18px; padding: 44px 48px;
+    max-width: 720px; width: 100%; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 32px 100px rgba(0,0,0,0.5);
+    position: relative;
+    border: 1.5px solid rgba(239,159,39,0.35);
+  }
+  .cmc-modal-close {
+    position: absolute; top: 18px; right: 18px;
+    background: #F0F4F8; border: none; border-radius: 50%;
+    width: 34px; height: 34px; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #617089; transition: background 0.15s;
+  }
+  .cmc-modal-close:hover { background: #E0E8F0; color: #0C2340; }
+  .cmc-modal-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  }
+  .cmc-modal-title {
+    font-size: 26px; font-weight: 700; color: var(--navy);
+    letter-spacing: -0.015em; margin-bottom: 20px; line-height: 1.2;
+    padding-right: 40px;
+  }
+  .cmc-modal-body p {
+    font-size: 14.5px; color: #3D4E63; line-height: 1.7; margin-bottom: 14px;
+  }
+  .cmc-modal-body p strong { color: var(--navy); }
+  .cmc-modal-body p:last-child {
+    margin-bottom: 0; font-style: italic; color: var(--navy); font-weight: 500;
+    padding-top: 8px; border-top: 1px solid #EEF2F8;
+  }
+
   /* ARCH DIAGRAM */
   .arch {
     font-family: 'Courier New', Courier, monospace;
@@ -421,6 +487,621 @@
     .stats { grid-template-columns: 1fr; }
     .top-nav { padding: 0 1.25rem; }
   }
+
+  /* ───── ARCHITECTURE (Phase 03) CSS ───── */
+
+  /* CMC section divider — anchor target for nav CMC link */
+  .cmc-divider {
+    text-align: center;
+    scroll-margin-top: 90px;
+    padding-bottom: 4px;
+  }
+  .cmc-divider-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+    margin-top: 0;
+  }
+  .cmc-divider-line {
+    height: 1px;
+    background: rgba(12,35,64,0.18);
+    width: 100%;
+  }
+
+  /* Canopy Agent inline detail panel */
+  .canopy-detail {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 44px;
+    box-shadow: 0 4px 24px rgba(12,35,64,0.08);
+    border: 1px solid rgba(12,35,64,0.08);
+    scroll-margin-top: 100px;
+  }
+  .cd-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .cd-title {
+    font-size: 28px; font-weight: 700; color: var(--navy);
+    letter-spacing: -0.015em; margin-bottom: 16px; line-height: 1.2;
+  }
+  .cd-lead {
+    font-size: 15px; font-weight: 500; color: var(--navy);
+    line-height: 1.65; margin-bottom: 14px;
+  }
+  .cd-body {
+    font-size: 14px; color: var(--text-muted);
+    line-height: 1.7; margin-bottom: 14px;
+  }
+  .cd-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #EEF2F8;
+  }
+  .cd-section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .cd-section-sub {
+    font-size: 11px; font-weight: 400; letter-spacing: 0;
+    text-transform: none; color: var(--text-muted);
+    margin-left: 4px;
+  }
+  .cd-list {
+    list-style: none; margin: 0; padding: 0;
+  }
+  .cd-list li {
+    font-size: 13.5px; color: var(--text-muted);
+    line-height: 1.65; margin-bottom: 8px; padding-left: 16px;
+    position: relative;
+  }
+  .cd-list li::before {
+    content: '•'; color: var(--gold);
+    position: absolute; left: 4px; top: 0;
+  }
+  .cd-list code {
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    color: var(--gold);
+    background: rgba(239,159,39,0.1);
+    padding: 1px 6px; border-radius: 3px;
+  }
+  .cd-list strong {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* Hover hint above the arena */
+  #how-it-works .arena-hint-top {
+    text-align: center;
+    color: #B83A3A;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ───── PAGE HEADER ───── */
+  #how-it-works .page-header { text-align: center; margin-bottom: 36px; }
+  #how-it-works .page-header .eyebrow {
+    font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: #BA7517; margin-bottom: 10px;
+  }
+  #how-it-works .page-header h1 {
+    font-size: 38px; font-weight: 800; color: #0C2340;
+    letter-spacing: -0.025em; margin-bottom: 10px;
+  }
+  #how-it-works .page-header p {
+    font-size: 16px; color: #617089; font-weight: 400;
+    max-width: 520px; margin: 0 auto; line-height: 1.5;
+  }
+
+  /* ───── ARENA ───── */
+  .arena-wrap { overflow-x: auto; padding-bottom: 8px; width: 100%; max-width: 900px; }
+  .arena {
+    position: relative;
+    width: 860px; height: 1140px;
+    background: linear-gradient(155deg, #0C2340 0%, #0A1929 55%, #0B1E36 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    overflow: visible;
+    margin: 0 auto;
+  }
+
+  /* ───── SVG OVERLAY ───── */
+  .arena-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 6;
+  }
+
+  /* ───── DOCUMENT INGESTION ───── */
+  .ingestion-strip {
+    position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px; z-index: 10; white-space: nowrap;
+  }
+  .ingestion-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.82);
+  }
+  .ingestion-box {
+    display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.025);
+    border: 1.5px solid rgba(0,204,238,0.32);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  .ingestion-box.lit {
+    border-color: rgba(0,204,238,0.9);
+    background: rgba(0,204,238,0.06);
+    box-shadow: 0 0 32px rgba(0,204,238,0.45), 0 0 14px rgba(0,204,238,0.3), inset 0 0 18px rgba(0,204,238,0.1);
+  }
+  .entry-box {
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.025);
+    border: 1.5px solid rgba(0,204,238,0.32);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  .entry-box.lit {
+    border-color: rgba(0,204,238,0.9);
+    background: rgba(0,204,238,0.06);
+    box-shadow: 0 0 32px rgba(0,204,238,0.45), 0 0 14px rgba(0,204,238,0.3), inset 0 0 18px rgba(0,204,238,0.1);
+  }
+  .entry-box .mini-node {
+    pointer-events: none;
+    font-size: 12.5px;
+    padding: 8px 16px;
+    color: rgba(255,255,255,0.92);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .mini-system.entry .mini-system-label,
+  .mini-system.output .mini-system-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.82);
+  }
+  .ingestion-pill {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px; padding: 3px 11px; font-size: 11px;
+    color: rgba(255,255,255,0.92); font-weight: 500; transition: all 0.2s;
+    pointer-events: none;
+  }
+
+  /* ───── CANOPY AGENT ───── */
+  .canopy-agent {
+    position: absolute; top: 180px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #0C2340 0%, #0F2A50 100%);
+    border: 2px solid rgba(186,117,23,0.65); border-radius: 14px;
+    padding: 20px 28px 22px; text-align: center; z-index: 10; cursor: pointer;
+    box-shadow: 0 0 40px rgba(186,117,23,0.18), 0 8px 32px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s, border-color 0.3s; min-width: 220px; max-width: 280px;
+  }
+  .canopy-agent:hover {
+    box-shadow: 0 0 60px rgba(239,159,39,0.55), 0 0 28px rgba(239,159,39,0.35), 0 8px 40px rgba(0,0,0,0.6);
+    border-color: rgba(239,159,39,0.9);
+  }
+  .canopy-title { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: 0.01em; }
+  .canopy-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 6px; letter-spacing: 0.02em; }
+  .canopy-sub-name { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; font-style: italic; }
+
+  /* ───── MINI SYSTEMS ───── */
+  .mini-system { position: absolute; top: 180px; z-index: 10; }
+  .mini-system.entry { left: 48px; }
+  .mini-system.output { right: 48px; }
+  .mini-system-label {
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.3);
+    text-align: center; margin-bottom: 8px;
+  }
+  .mini-nodes { display: flex; flex-direction: column; gap: 7px; }
+  .mini-node {
+    background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 7px 14px; font-size: 11.5px;
+    color: rgba(255,255,255,0.68); font-weight: 500; white-space: nowrap;
+    transition: all 0.2s; cursor: default;
+  }
+  .mini-node:hover {
+    background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9);
+  }
+  .mini-icon { margin-right: 6px; }
+
+  /* ───── CPU CHIP (CMC) ───── */
+  /* Wrapper holds the chip + SVG PCB board so they size together */
+  .cmc-wrapper {
+    position: absolute;
+    left: 50%; top: 380px;
+    transform: translateX(-50%);
+    width: 640px; height: 640px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  /* SVG PCB board behind/around the chip */
+  .cpu-pins {
+    position: absolute; inset: 0;
+    width: 640px; height: 640px;
+    pointer-events: none;
+  }
+  /* The actual chip — silver, sits over the SVG chip area (110/500*640=141px) */
+  .cmc-chip {
+    position: absolute; top: 141px; left: 141px;
+    width: 358px; height: 358px;
+    border-radius: 14px;
+    background: #b2bcc8;
+    border: none;
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92);
+    overflow: hidden;
+    pointer-events: all;
+    transition: box-shadow 0.3s;
+  }
+  .cmc-chip:hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92), 0 0 28px rgba(0,204,238,0.18);
+  }
+  .cmc-chip::before { display: none; }
+
+  /* CMC default view */
+  .cmc-default {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 0 8px 8px;
+    gap: 4px;
+    transition: opacity 0.35s, transform 0.35s;
+    transform-origin: center;
+  }
+  .cmc-default.hidden { opacity: 0; pointer-events: none; transform: scale(0.97); }
+
+  .cmc-header { padding: 14px 12px 0; text-align: center; flex-shrink: 0; background: transparent; }
+  .cmc-header-title {
+    font-size: 13px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #1a2e40;
+  }
+  .scope-tiers {
+    display: flex; justify-content: center; gap: 4px;
+    padding: 5px 4px 0; flex-shrink: 0;
+  }
+  .scope-chip {
+    font-size: 10px; font-weight: 700; padding: 3px 9px;
+    border-radius: 999px; cursor: pointer; transition: all 0.15s;
+    white-space: nowrap; border: none; outline: none;
+  }
+  .scope-chip:hover {
+    transform: scale(1.08);
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(0,204,238,0.5), 0 0 14px rgba(0,204,238,0.55), 0 0 28px rgba(0,204,238,0.3);
+  }
+  .scope-chip.t1 { background: #0C2340; color: #fff; }
+  .scope-chip.t2 { background: #0C447C; color: #fff; }
+  .scope-chip.t3 { background: #185FA5; color: #fff; }
+
+  /* Bands — each is a distinct rounded button card */
+  .cmc-band {
+    flex: 1; padding: 7px 14px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer; border-radius: 8px; border: 2px solid transparent;
+    position: relative; text-align: center;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.12s;
+    min-height: 0;
+  }
+  .cmc-band:hover {
+    border-color: rgba(0,204,238,0.55);
+    box-shadow: 0 0 0 1px rgba(0,204,238,0.2), 0 0 20px rgba(0,204,238,0.28), inset 0 0 18px rgba(0,204,238,0.1);
+    transform: scale(1.015);
+  }
+  .band-source  { background: #F7F3E8; }
+  .band-compile { background: #F7F3E8; }
+  .band-retriev { background: #F7F3E8; }
+  .band-sleep {
+    flex: 0 0 34px; background: #F9E9EF;
+    padding: 0 14px; justify-content: center;
+    align-items: center; flex-direction: row;
+  }
+  .band-name {
+    font-size: 10.5px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.09em; color: #4a6070; margin-bottom: 5px;
+    text-align: center; width: 100%;
+  }
+  .band-nodes { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; justify-content: center; }
+  .band-pill {
+    font-size: 10px; font-weight: 600;
+    background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.09);
+    border-radius: 5px; padding: 2px 8px; color: #0C2340; white-space: nowrap;
+  }
+  .band-arr { font-size: 9px; color: #aaa; flex-shrink: 0; }
+  .band-hint { display: none; }
+  .sleep-text {
+    font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.09em; color: #b06070; text-align: center;
+  }
+  .ep-strip { margin-top: 4px; display: flex; align-items: center; gap: 5px; justify-content: center; }
+  .ep-badge {
+    font-size: 9px; font-weight: 700; background: #FFF1DF;
+    border: 1px solid rgba(186,117,23,0.4); border-radius: 5px;
+    padding: 2px 8px; color: #BA7517; white-space: nowrap;
+  }
+  .hitl-badge {
+    font-size: 9px; font-weight: 700; background: #EF9F27;
+    border-radius: 5px; padding: 2px 8px; color: #0C2340; white-space: nowrap;
+  }
+
+  /* ───── AGENT PANEL ───── */
+  .cmc-agent-panel {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #0C2340 0%, #0A1929 100%);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s, transform 0.35s;
+    transform: scale(1.02); transform-origin: center; overflow: hidden;
+  }
+  .cmc-agent-panel.visible {
+    opacity: 1; pointer-events: all; transform: scale(1);
+  }
+  .ap-close-btn {
+    position: absolute; top: 52px; right: 44px;
+    width: 26px; height: 26px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 50%; color: rgba(255,255,255,0.65); font-size: 12px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 20; transition: all 0.15s; flex-shrink: 0;
+  }
+  .ap-close-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+  .ap-body {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 44px 44px; text-align: center;
+    overflow-y: auto; scrollbar-width: none;
+  }
+  .ap-body::-webkit-scrollbar { display: none; }
+  .ap-icon { font-size: 34px; line-height: 1; margin-bottom: 9px; }
+  .ap-name { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; line-height: 1.2; }
+  .ap-tagline {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #EF9F27; margin-bottom: 12px;
+  }
+  .ap-desc { font-size: 12px; color: rgba(255,255,255,0.68); line-height: 1.6; margin-bottom: 14px; }
+  .ap-cmc-label {
+    font-size: 8.5px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.28);
+    margin-bottom: 6px; align-self: stretch; text-align: left;
+  }
+  .ap-cmc-rule { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 8px; }
+  .ap-cmc-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.55; text-align: left; align-self: stretch; }
+
+  /* ───── AGENT NODES ───── */
+  .agent-node {
+    position: absolute; width: 93px; z-index: 8;
+    cursor: pointer; text-align: center;
+  }
+  .agent-node:hover { z-index: 50; }
+  .agent-bubble {
+    width: 93px; height: 93px; border-radius: 50%;
+    background: #fff; border: 2px solid rgba(124,141,168,0.35);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 2px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.2s;
+  }
+  .agent-bubble:hover {
+    border-color: #EF9F27;
+    box-shadow: 0 0 36px rgba(239,159,39,0.75), 0 0 18px rgba(239,159,39,0.5), 0 4px 16px rgba(0,0,0,0.3);
+    transform: scale(1.1);
+  }
+  .agent-node.selected .agent-bubble {
+    background: #EF9F27; border-color: #BA7517;
+    box-shadow: 0 0 44px rgba(239,159,39,0.85), 0 0 20px rgba(239,159,39,0.6), 0 4px 16px rgba(0,0,0,0.3);
+    transform: scale(1.12);
+  }
+  .a-icon { font-size: 27px; line-height: 1; pointer-events: none; }
+  .agent-name-lbl {
+    font-size: 9px; font-weight: 700; color: #0C2340;
+    line-height: 1.25; text-align: center; padding: 0 6px;
+    pointer-events: none; white-space: normal; word-break: normal;
+    width: 100%;
+  }
+  .agent-node.selected .agent-name-lbl { color: #5a3000; }
+
+  /* Tooltip — position:fixed so it escapes all container clipping */
+  #agentTooltip {
+    position: fixed;
+    background: rgba(12,35,64,0.97); color: rgba(255,255,255,0.9);
+    font-size: 13px; line-height: 1.5; padding: 13px 16px;
+    border-radius: 11px; width: 580px; pointer-events: none;
+    opacity: 0; transition: opacity 0.18s;
+    border: 1.5px solid rgba(239,159,39,0.65); z-index: 99999;
+    text-align: left;
+    box-shadow: 0 0 22px rgba(239,159,39,0.38), 0 8px 28px rgba(0,0,0,0.55);
+  }
+  #agentTooltip.visible { opacity: 1; }
+  #agentTooltip::after {
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+    border: 6px solid transparent;
+  }
+  #agentTooltip.tip-above::after {
+    top: 100%; border-top-color: rgba(12,35,64,0.97);
+  }
+  #agentTooltip.tip-below::after {
+    bottom: 100%; border-bottom-color: rgba(12,35,64,0.97);
+  }
+  .tip-breakdown {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 13px; line-height: 1.8;
+  }
+  .tip-breakdown-row { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 4px; line-height: 1.5; }
+  .tip-breakdown-row::before { content: '•'; color: rgba(255,255,255,0.35); flex-shrink: 0; line-height: inherit; }
+  .tip-skill {
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: #EF9F27; background: rgba(239,159,39,0.12);
+    padding: 1px 5px; border-radius: 3px; white-space: nowrap;
+  }
+  .tip-lbl { color: rgba(255,255,255,0.9); font-weight: 600; }
+  .tip-dim { color: rgba(255,255,255,0.6); }
+  /* keep old .agent-tip hidden — replaced by #agentTooltip */
+  .agent-tip { display: none; }
+  .agent-node.tip-below .agent-tip::after {
+    top: auto; bottom: 100%;
+    border-top-color: transparent; border-bottom-color: rgba(12,35,64,0.97);
+  }
+
+  /* ───── ORBIT RING ───── */
+  #orbitRing {
+    transition: stroke 0.3s, stroke-opacity 0.3s, stroke-width 0.3s, filter 0.3s;
+  }
+  #orbitRing.orbit-glow {
+    stroke: #EF9F27;
+    stroke-opacity: 0.7;
+    stroke-width: 1.5;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px rgba(239,159,39,0.9)) drop-shadow(0 0 12px rgba(239,159,39,0.5));
+  }
+
+  /* ───── HOVER CONNECTOR ───── */
+  @keyframes dashFlow {
+    to { stroke-dashoffset: -52; }
+  }
+  #hoverConnector[opacity="1"] {
+    animation: dashFlow 1.1s linear infinite;
+  }
+  /* CMC glows when an agent is hovered */
+  .cmc-wrapper.agent-hover .cpu-pins {
+    filter: drop-shadow(0 0 18px rgba(239,159,39,0.55)) drop-shadow(0 0 8px rgba(239,159,39,0.35));
+  }
+  .cmc-chip.agent-hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92),
+      0 0 50px rgba(239,159,39,0.55), 0 0 22px rgba(239,159,39,0.35);
+    transition: box-shadow 0.25s;
+  }
+
+  /* ───── CANOPY AGENT HOVER → cyan CMC glow ───── */
+  .cmc-wrapper.canopy-hover .cpu-pins {
+    filter: drop-shadow(0 0 20px rgba(0,204,238,0.7)) drop-shadow(0 0 8px rgba(0,204,238,0.45));
+  }
+  .cmc-chip.canopy-hover {
+    box-shadow: 4px 6px 0 0 rgba(1,8,16,0.92),
+      0 0 55px rgba(0,204,238,0.65), 0 0 24px rgba(0,204,238,0.4);
+    transition: box-shadow 0.25s;
+  }
+  /* Canopy lines — dim by default, glow when lit */
+  #canopyLine1, #canopyLine2 {
+    transition: opacity 0.25s;
+  }
+  #canopyLine1.lit, #canopyLine2.lit {
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(0,204,238,1)) drop-shadow(0 0 6px rgba(0,204,238,0.7));
+  }
+  /* Doc Ingestion → Canopy lines — dim by default, glow when lit */
+  #docLine1, #docLine2 {
+    transition: opacity 0.25s;
+  }
+  #docLine1.lit, #docLine2.lit {
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 3px rgba(0,204,238,1)) drop-shadow(0 0 6px rgba(0,204,238,0.7));
+  }
+  /* Canopy Agent .lit state mirrors :hover so cascade can re-fire it */
+  .canopy-agent.lit {
+    box-shadow: 0 0 60px rgba(239,159,39,0.55), 0 0 28px rgba(239,159,39,0.35), 0 8px 40px rgba(0,0,0,0.6);
+    border-color: rgba(239,159,39,0.9);
+  }
+  /* Cyan tooltip variant (Document Ingestion) */
+  #agentTooltip.tip-cyan {
+    border-color: rgba(0,204,238,0.65);
+    box-shadow: 0 0 22px rgba(0,204,238,0.4), 0 8px 28px rgba(0,0,0,0.55);
+  }
+  /* Field Users / System Output → Canopy Agent gold connector lines */
+  #fieldLine, #outputLine {
+    transition: opacity 0.25s, stroke-width 0.25s;
+  }
+  #fieldLine.lit, #outputLine.lit {
+    opacity: 1 !important;
+    stroke-width: 3.4;
+    filter: drop-shadow(0 0 3px rgba(239,159,39,1)) drop-shadow(0 0 7px rgba(239,159,39,0.65));
+  }
+  /* CMC band scrollable tooltip variant — shared styling with tip-canopy */
+  #agentTooltip.tip-band {
+    width: 620px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border-color: rgba(239,159,39,0.65);
+    box-shadow: 0 0 22px rgba(239,159,39,0.4), 0 8px 28px rgba(0,0,0,0.55);
+    text-align: left;
+  }
+  #agentTooltip.tip-band.visible { pointer-events: auto; }
+  #agentTooltip.tip-band::-webkit-scrollbar { width: 6px; }
+  #agentTooltip.tip-band::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+  #agentTooltip.tip-band::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  /* Canopy Agent scrollable tooltip variant */
+  #agentTooltip.tip-canopy {
+    width: 620px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border-color: rgba(239,159,39,0.65);
+    box-shadow: 0 0 22px rgba(239,159,39,0.4), 0 8px 28px rgba(0,0,0,0.55);
+    text-align: left;
+  }
+  /* Only catch mouse events when actually visible — otherwise invisible tooltip would block orbit agents */
+  #agentTooltip.tip-canopy.visible {
+    pointer-events: auto;
+  }
+  #agentTooltip.tip-canopy::-webkit-scrollbar { width: 6px; }
+  #agentTooltip.tip-canopy::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+  #agentTooltip.tip-canopy::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+  /* ───── HINT ───── */
+  .arena-hint {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 10.5px; color: rgba(255,255,255,0.22);
+    white-space: nowrap; z-index: 10; letter-spacing: 0.02em;
+  }
+
+  /* ───── MODAL ───── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(6,17,30,0.8); backdrop-filter: blur(6px);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-card {
+    background: #fff; border-radius: 22px; padding: 40px 44px;
+    max-width: 580px; width: calc(100% - 40px);
+    box-shadow: 0 32px 100px rgba(0,0,0,0.5);
+    position: relative; max-height: 85vh; overflow-y: auto; scrollbar-width: thin;
+  }
+  .modal-close {
+    position: absolute; top: 18px; right: 18px;
+    background: #F0F4F8; border: none; border-radius: 50%;
+    width: 34px; height: 34px; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #617089; transition: background 0.15s;
+  }
+  .modal-close:hover { background: #E0E8F0; color: #0C2340; }
+  .modal-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #8A9BB0; margin-bottom: 10px; }
+  .modal-title { font-size: 26px; font-weight: 800; color: #0C2340; letter-spacing: -0.02em; margin-bottom: 8px; padding-right: 40px; }
+  .modal-subtitle { font-size: 14px; color: #617089; line-height: 1.55; margin-bottom: 22px; }
+  .modal-nodes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .modal-node {
+    background: #EEF2F8; border: 1px solid rgba(12,68,124,0.14);
+    border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: #0C2340;
+  }
+  .modal-divider { height: 1px; background: #EEF2F8; margin-bottom: 20px; }
+  .modal-body p { font-size: 14px; color: #3D4E63; line-height: 1.7; margin-bottom: 14px; }
+  .modal-body p:last-child { margin-bottom: 0; }
+
+  /* ───── LEGEND ───── */
+  .legend { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 28px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: #617089; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -432,11 +1113,12 @@
     CanopyOS
   </div>
   <ul class="nav-links">
-    <li><a href="#what" class="active">What is CanopyOS?</a></li>
-    <li><a href="#why" class="active">Why CanopyOS?</a></li>
-    <li><a href="#" style="opacity:0.4; cursor:default; pointer-events:none">How it Works</a></li>
+    <li><a href="#what">What is CanopyOS?</a></li>
+    <li><a href="#why">Why CanopyOS?</a></li>
+    <li><a href="#how-it-works">How it Works</a></li>
+    <li><a href="#cmc-section">CMC</a></li>
   </ul>
-  <div class="nav-status">Internal Draft</div>
+  <div class="nav-status">Internal Draft V2.0</div>
 </nav>
 
 <!-- HERO -->
@@ -484,9 +1166,9 @@
     <div class="perspective" id="p2">
       <div class="p-badge"><i class="ti ti-helmet"></i> Perspective 2</div>
       <h3 class="p-title">Field and operations</h3>
-      <p class="p-lead">CanopyOS is like having an invisible, hyper-intelligent field engineer floating right over the job site, accessible straight from your tablet or phone.</p>
-      <p class="p-body">When you're out in the field and notice an issue or a structural conflict, you don't have to step away from production or walk back to the trailer to resolve it. You simply have a natural, real-time conversation with Canopy and explain what you see. Instantly, its digital sub-agents spring into action — sweeping through thousands of pages of blueprints and contract specifications to isolate the exact contradiction and automatically generate a flawless, professional RFI draft.</p>
-      <p class="p-body">Once the system queues it up, you or your project manager can review the draft right on your screen, modify it via voice if needed, and send it to the architect with a quick approval. From that point on, you never have to manually track it, log it, or try to remember it. CanopyOS continuously watches the clock against your active milestone schedule, autonomously chasing down un-answered items and alerting the team if a delayed response is getting dangerously close to holding up an upcoming trade sequence or concrete pour.</p>
+      <p class="p-lead">CanopyOS is like having an invisible, hyper-intelligent field engineer floating right over the job site — accessible via voice or from your tablet, phone, or meeting space.</p>
+      <p class="p-body">When you're out in the field and notice an issue or a structural conflict, you don't have to step away from production or walk back to the trailer to resolve it. You simply have a natural, real-time conversation with Canopy and explain what you see. Instantly, its digital sub-agents spring into action — sweeping through thousands of pages of blueprints and contract specifications to isolate the exact contradiction and automatically generate a flawless, professional response draft or document.</p>
+      <p class="p-body">Once the system queues up — for example, an RFI initiation — you or your project manager can review the RFI draft right on your screen, modify it via voice if needed, and send it to the architect with a quick approval. From that point on, you never have to manually track it, log it, or try to remember it. CanopyOS continuously watches the clock against your active milestone schedule, autonomously chasing down un-answered items and alerting the team if a delayed response is getting dangerously close to holding up an upcoming trade sequence or concrete pour.</p>
     </div>
 
     <!-- P3 -->
@@ -500,45 +1182,46 @@
         <div class="tc-icon"><i class="ti ti-database"></i></div>
         <div>
           <div class="tc-name">Agnostic ingestion engine</div>
-          <div class="tc-desc">Connects directly to internal project repositories and document servers, instantly indexing unstructured data — blueprints, specifications, contract items, and 3D modeling matrices — into a highly optimized, localized RAG mesh.</div>
+          <div class="tc-desc">Connects directly to internal project repositories, document servers, and field capture sources, indexing unstructured data — drawings, specs, contracts, RFIs, submittals, photos, and BIM models — into the project's Compiled Memory Core.</div>
         </div>
       </div>
-      <div class="tech-card">
+      <div class="tc-hint">ⓘ Click to expand CMC</div>
+      <div class="tech-card tc-expandable" id="cmcExpandCard">
         <div class="tc-icon"><i class="ti ti-chart-line"></i></div>
         <div>
-          <div class="tc-name">State-driven lifecycle architecture</div>
-          <div class="tc-desc">Explicitly mapped to the project's physical S-curve. Programmatic levers and toggles dynamically scale background processing — specialized sub-agents brought online or hibernated to match active phases: procurement, rough-in, or commissioning.</div>
+          <div class="tc-name">Compiled Memory Core (CMC)</div>
+          <div class="tc-desc">The system's source-grounded memory layer. Where standard RAG retrieves from raw document chunks, the CMC compiles raw documents into typed, versioned, conflict-checked knowledge <em>before</em> retrieval happens — so queries hit pre-vetted claims with freshness, confidence, and known conflicts already flagged. Every answer ships with an Evidence Pack containing exact citations.</div>
         </div>
       </div>
       <div class="tech-card">
         <div class="tc-icon"><i class="ti ti-users"></i></div>
         <div>
-          <div class="tc-name">Discipline-specific sub-agents</div>
-          <div class="tc-desc">A coordinated swarm of digital employees — RFI Agent, Submittal & Logistics Agent, Labor & Manpower Agent, and Predictive Safety Agent — each hyper-focused on a single construction domain.</div>
+          <div class="tc-name">Specialist agent swarm</div>
+          <div class="tc-desc">A coordinated set of digital employees — nine specialists, each hyper-focused on a single construction domain. The Canopy Agent serves as the conductor, routing every question to the right specialist and assembling the cited answer.</div>
         </div>
       </div>
       <div class="tech-card">
         <div class="tc-icon"><i class="ti ti-shield-check"></i></div>
         <div>
-          <div class="tc-name">Defense-in-depth integrity gates</div>
-          <div class="tc-desc">Every autonomous output is funneled through a strict multi-model Critic/Arena parallel evaluation pipeline — eliminating confabulation and enforcing data governance before any payload reaches the human-in-the-loop approval endpoint.</div>
+          <div class="tc-name">Human-in-the-loop integrity gates</div>
+          <div class="tc-desc">Every high-stakes output passes through a HITL approval step before reaching its endpoint, eliminating confabulation and enforcing data governance.</div>
         </div>
       </div>
 
-      <div class="arch">[ Voice / Tablet Interface in the Field ]
-            |
-            v
-[ CanopyOS Master Orchestrator — Local Secure Server ]
-            |
-   .---------+---------.
-   v         v         v
-[RAG Mesh] [Lifecycle] [Sub-Agent Swarm]
-            |
-            v
-[ Defense-in-Depth Critic / Arena ]
-            |
-            v
-[ Human-In-The-Loop Approval (HITL) ]</div>
+      <div class="arch">[ Voice / Mobile / Tablet / MS Teams / Job-site endpoint ]
+                          |
+                          v
+        [ Canopy Agent — Local Secure Server ]
+                          |
+                 .--------+--------.
+                 v        v        v
+              [ Specialist Agent Swarm ]
+                          |
+                          v
+            [ Compiled Memory Core (CMC) ]
+                          |
+                          v
+              [ Evidence Pack + HITL ]</div>
     </div>
   </section>
 
@@ -608,16 +1291,1199 @@
       <div class="bridge">
         <p>The question is not whether the industry needs this. The data says it does. The question is who builds it first — and whether the system is built with the operational precision the job demands.</p>
       </div>
+
+      <div class="bridge">
+        <p>A system like this needs to be tested with real teams on real projects. The future of construction will require people to work alongside digital assets as trusted partners, not tools — and the teams that develop that fluency first will define what comes next. CanopyOS is built to be that proving ground.</p>
+      </div>
     </div>
   </section>
 
 </main>
 
 <footer>
+  <div style="text-align:center; margin-bottom: 14px;">
+    <span class="nav-status">Internal Draft V2.0</span>
+  </div>
   <p><strong>CanopyOS</strong> — Internal Enterprise Architecture Document<br>
-  David Solomon · Operational Excellence Manager &amp; Systems Engineer<br>
-  Document Date: May 2026 · Status: Architecture Locked / Ready for Internal Proposal</p>
+  David Solomon · Operational Excellence Manager<br>
+  Document Date: May 2026 · Status: Architecture Proposed</p>
 </footer>
 
+<!-- ======================== -->
+<!-- SECTION 03: HOW IT WORKS -->
+<!-- ======================== -->
+<div id="how-it-works" style="background:#EEF2F8; padding: 64px 20px 80px; display:flex; flex-direction:column; align-items:center;">
+
+<!-- SECTION HEADER (matches Sections 01/02) -->
+<div class="page" style="width: 100%;">
+  <div class="section-header">
+    <div class="section-eyebrow">Section 03</div>
+    <h2 class="section-title">How CanopyOS Works</h2>
+    <p class="section-sub">Nine specialist agents connected to a shared memory core. Every answer is source-grounded, cited, and traceable.</p>
+    <p class="arena-hint-top">(Hover over or Click each item to learn more)</p>
+  </div>
+</div>
+
+<!-- ARENA -->
+<div class="arena-wrap">
+<div class="arena" id="arena">
+
+  <!-- SVG: orbit ring + connectors -->
+  <svg class="arena-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="lineGlow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Orbit path ring — radius 300, CMC center (430, 700) -->
+    <circle id="orbitRing" cx="430" cy="700" r="300"
+      fill="none" stroke="rgba(255,255,255,0.06)"
+      stroke-width="1"/>
+    <!-- Vertical connection: Document Ingestion bottom → Canopy Agent top -->
+    <line id="docLine1" x1="425" y1="85" x2="425" y2="180" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+    <line id="docLine2" x1="435" y1="85" x2="435" y2="180" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+    <!-- Horizontal connection: Field Users right → Canopy Agent left (coords set in JS) -->
+    <line id="fieldLine" x1="0" y1="0" x2="0" y2="0" stroke="#EF9F27" stroke-width="2.8" opacity="0.45"/>
+    <!-- Horizontal connection: Canopy Agent right → System Output left (coords set in JS) -->
+    <line id="outputLine" x1="0" y1="0" x2="0" y2="0" stroke="#EF9F27" stroke-width="2.8" opacity="0.45"/>
+    <!-- Vertical connection: Canopy Agent bottom → CMC chip top -->
+    <line id="canopyLine1" x1="425" y1="285" x2="425" y2="521" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+    <line id="canopyLine2" x1="435" y1="285" x2="435" y2="521" stroke="#00ccee" stroke-width="1.5" opacity="0.45"/>
+  </svg>
+
+  <!-- Document Ingestion -->
+  <div class="ingestion-strip">
+    <div class="ingestion-label">Document Ingestion</div>
+    <div class="ingestion-box" id="ingestionBox">
+      <span class="ingestion-pill">📐 Drawings</span>
+      <span class="ingestion-pill">📋 Specifications</span>
+      <span class="ingestion-pill">❓ RFIs</span>
+      <span class="ingestion-pill">📦 Submittals</span>
+      <span class="ingestion-pill">📜 Contracts</span>
+      <span class="ingestion-pill">📸 Photos</span>
+    </div>
+  </div>
+
+  <!-- Canopy Agent -->
+  <div class="canopy-agent">
+    <div class="canopy-title">🌳 &nbsp;Canopy Agent</div>
+    <div class="canopy-sub-name">(each project will give it a name)</div>
+    <div class="canopy-sub">Two-way communication · Natural language</div>
+  </div>
+
+  <!-- Entry -->
+  <div class="mini-system entry">
+    <div class="mini-system-label">Field Users</div>
+    <div class="mini-nodes entry-box" id="entryBox">
+      <div class="mini-node"><span class="mini-icon">👷</span>Project Operations</div>
+      <div class="mini-node"><span class="mini-icon">📱</span>Mobile / Voice</div>
+      <div class="mini-node"><span class="mini-icon">💬</span>MS Teams Chat</div>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="mini-system output">
+    <div class="mini-system-label">System Output</div>
+    <div class="mini-nodes entry-box" id="outputBox">
+      <div class="mini-node"><span class="mini-icon">💬</span>Cited Answers</div>
+      <div class="mini-node"><span class="mini-icon">📄</span>Documents</div>
+      <div class="mini-node"><span class="mini-icon">🔔</span>Alerts &amp; Flags</div>
+    </div>
+  </div>
+
+  <!-- CMC CPU Chip -->
+  <div class="cmc-wrapper">
+
+    <!-- PCB board with circuit traces -->
+    <svg class="cpu-pins" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="tg" x="-200%" y="-200%" width="500%" height="500%">
+          <feGaussianBlur stdDeviation="0.9" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <pattern id="dp" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="4" cy="4" r="0.9" fill="rgba(0,160,210,0.3)"/>
+        </pattern>
+      </defs>
+      <!-- PCB board -->
+      <rect x="38" y="38" width="424" height="424" rx="6" fill="#061420" stroke="rgba(0,160,210,0.38)" stroke-width="1.5"/>
+      <!-- Dot grid strips -->
+      <rect x="38" y="38" width="72" height="424" fill="url(#dp)"/>
+      <rect x="390" y="38" width="72" height="424" fill="url(#dp)"/>
+      <rect x="110" y="38" width="280" height="72" fill="url(#dp)"/>
+      <rect x="110" y="390" width="280" height="72" fill="url(#dp)"/>
+      <!-- BR corner bottom 3 traces -->
+      <path d="M381,390 L393,402 L393,420 L381,432 L381,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M375,390 L387,402 L387,424 L375,436 L375,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M369,390 L381,402 L381,428 L369,440 L369,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BR corner right 3 traces -->
+      <path d="M390,381 L402,393 L420,393 L432,381 L462,381" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,375 L402,387 L424,387 L436,375 L462,375" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,369 L402,381 L428,381 L440,369 L462,369" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner top 3 traces -->
+      <path d="M119,110 L107,98 L107,80 L119,68 L119,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M125,110 L113,98 L113,76 L125,64 L125,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M131,110 L119,98 L119,72 L131,60 L131,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner left 3 traces -->
+      <path d="M110,119 L98,107 L80,107 L68,119 L38,119" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,125 L98,113 L76,113 L64,125 L38,125" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,131 L98,119 L72,119 L60,131 L38,131" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TR corner top 3 traces -->
+      <path d="M381,110 L393,98 L393,80 L381,68 L381,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M375,110 L387,98 L387,76 L375,64 L375,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M369,110 L381,98 L381,72 L369,60 L369,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TR corner right 3 traces -->
+      <path d="M390,119 L402,107 L420,107 L432,119 L462,119" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,125 L402,113 L424,113 L436,125 L462,125" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M390,131 L402,119 L428,119 L440,131 L462,131" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BL corner bottom 3 traces -->
+      <path d="M119,390 L107,402 L107,420 L119,432 L119,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M125,390 L113,402 L113,424 L125,436 L125,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M131,390 L119,402 L119,428 L131,440 L131,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- BL corner left 3 traces -->
+      <path d="M110,381 L98,393 L80,393 L68,381 L38,381" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,375 L98,387 L80,387 L68,375 L38,375" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M110,369 L98,381 L80,381 L68,369 L38,369" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- Bottom 7 center traces -->
+      <line x1="250" y1="390" x2="250" y2="462" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="236" y1="462" x2="236" y2="430" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="264" y1="462" x2="264" y2="430" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <path d="M222,390 L212,400 L212,418 L222,428 L222,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M208,390 L196,402 L196,422 L208,434 L208,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M278,390 L288,400 L288,418 L278,428 L278,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M292,390 L304,402 L304,422 L292,434 L292,462" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- Top 7 center traces -->
+      <line x1="250" y1="110" x2="250" y2="38" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="236" y1="38" x2="236" y2="70" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <line x1="264" y1="38" x2="264" y2="70" stroke="#00ccee" stroke-width="1" opacity="0.85" filter="url(#tg)"/>
+      <path d="M222,110 L212,100 L212,82 L222,72 L222,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M208,110 L196,98 L196,78 L208,66 L208,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M278,110 L288,100 L288,82 L278,72 L278,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <path d="M292,110 L304,98 L304,78 L292,66 L292,38" stroke="#00ccee" stroke-width="1" fill="none" opacity="0.85" filter="url(#tg)"/>
+      <!-- TL corner L-bracket + raised square -->
+      <line x1="96" y1="96" x2="38" y2="96" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="96" y1="96" x2="96" y2="38" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="59" y="60" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="57" y="57" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="57" y1="57" x2="77" y2="57" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="57" y1="57" x2="57" y2="77" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="76" y1="58" x2="76" y2="77" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="58" y1="76" x2="77" y2="76" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- TR corner L-bracket + raised square -->
+      <line x1="404" y1="96" x2="462" y2="96" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="404" y1="96" x2="404" y2="38" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="423" y="60" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="423" y="57" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="423" y1="57" x2="443" y2="57" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="423" y1="57" x2="423" y2="77" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="442" y1="58" x2="442" y2="77" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="424" y1="76" x2="443" y2="76" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- BL corner L-bracket + raised square -->
+      <line x1="96" y1="404" x2="38" y2="404" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="96" y1="404" x2="96" y2="462" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="59" y="424" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="57" y="423" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="57" y1="423" x2="77" y2="423" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="57" y1="423" x2="57" y2="443" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="76" y1="424" x2="76" y2="443" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="58" y1="442" x2="77" y2="442" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <!-- BR corner L-bracket + raised square -->
+      <line x1="404" y1="404" x2="462" y2="404" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <line x1="404" y1="404" x2="404" y2="462" stroke="rgba(0,160,215,0.65)" stroke-width="1.3"/>
+      <rect x="427" y="429" width="20" height="20" rx="1" fill="#020c18" opacity="0.95"/>
+      <rect x="425" y="426" width="20" height="20" rx="1" fill="#0d3455"/>
+      <line x1="425" y1="426" x2="445" y2="426" stroke="rgba(40,130,200,0.5)" stroke-width="0.9"/>
+      <line x1="425" y1="426" x2="425" y2="446" stroke="rgba(40,130,200,0.4)" stroke-width="0.9"/>
+      <line x1="444" y1="427" x2="444" y2="446" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+      <line x1="426" y1="445" x2="445" y2="445" stroke="rgba(2,12,28,0.6)" stroke-width="0.9"/>
+    </svg>
+
+    <div class="cmc-chip" id="cmcCircle">
+
+    <div class="cmc-default" id="cmcDefault">
+      <div class="cmc-header">
+        <div class="cmc-header-title">Compiled Memory Core</div>
+      </div>
+      <div class="scope-tiers">
+        <button class="scope-chip t1" onclick="openTierModal(0)">① Project</button>
+        <button class="scope-chip t2" onclick="openTierModal(1)">② Organization</button>
+        <button class="scope-chip t3" onclick="openTierModal(2)">③ Reference</button>
+      </div>
+      <div class="cmc-band band-source" data-band="sourceTruth">
+        <div class="band-name">Source Truth Band</div>
+        <div class="band-nodes">
+          <span class="band-pill">Source Ledger</span>
+          <span class="band-pill">Raw Files</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-compile" data-band="compilation">
+        <div class="band-name">Compilation Band</div>
+        <div class="band-nodes">
+          <span class="band-pill">Capture</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Index</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Compilers</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">CMC</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-retriev" data-band="retrieval">
+        <div class="band-name">Retrieval Band</div>
+        <div class="band-nodes">
+          <span class="band-pill">Surfaces</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Orchestrator</span>
+          <span class="band-arr">→</span>
+          <span class="band-pill">Evidence Pack</span>
+        </div>
+        <div class="ep-strip">
+          <span class="ep-badge">Evidence Pack →</span>
+          <span class="hitl-badge">HITL Gate</span>
+        </div>
+        <span class="band-hint">click ›</span>
+      </div>
+      <div class="cmc-band band-sleep" data-band="sleep">
+        <div class="sleep-text">⟳ &nbsp;Sleep · Consolidation &nbsp;·&nbsp; Background rebuild · Contradiction checks · Stale cleanup</div>
+      </div>
+    </div>
+
+    <!-- Agent detail panel — disabled -->
+    <div class="cmc-agent-panel" id="cmcAgentPanel" style="display:none;">
+      <button class="ap-close-btn" onclick="closeAgentPanel()">✕</button>
+      <div class="ap-body">
+        <div class="ap-icon" id="apIcon"></div>
+        <div class="ap-name" id="apName"></div>
+        <div class="ap-tagline" id="apTagline"></div>
+        <div class="ap-desc" id="apDesc"></div>
+        <div class="ap-cmc-label">CMC Relationship</div>
+        <div class="ap-cmc-rule"></div>
+        <div class="ap-cmc-text" id="apCmc"></div>
+      </div>
+    </div>
+
+  </div><!-- /cmc-chip -->
+  </div><!-- /cmc-wrapper -->
+
+  <!-- Agent nodes injected by JS -->
+
+
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
+  <div class="modal-card" id="modalCard">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-tag" id="modalTag"></div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-subtitle" id="modalSubtitle"></div>
+    <div class="modal-nodes" id="modalNodes"></div>
+    <div class="modal-divider" id="modalDivider"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Shared floating tooltip -->
+<div id="agentTooltip"></div>
+
+<!-- Canopy Agent inline detail (scroll target from clicking the Canopy Agent box) -->
+<div class="page" style="width:100%; margin-top:56px;">
+  <div id="canopy-detail" class="canopy-detail">
+    <div class="cd-eyebrow">CanopyOS · Voice Interface</div>
+    <h2 class="cd-title">🌳 Canopy Agent</h2>
+    <p class="cd-lead">Canopy Agent is the project's voice. The team names it at kickoff — Juan, Sarah, whatever fits — and from that point on, every project conversation flows through it. Foremen ask questions from the field on mobile. PMs run briefings in the trailer. Engineers chat with it on a laptop or tablet. And on the jobsite itself, fixed endpoints — meeting rooms, the trailer, certain field stations — let a trade foreman simply speak Canopy's name and get an answer back, no device required.</p>
+    <p class="cd-body">Canopy carries no domain knowledge of its own. That lives in the specialist agents and the CMC. What Canopy does is understand intent, route every question to the right specialist (or chain of specialists), assemble the cited answer, and deliver it back conversationally. It also keeps the team current without being asked — pushing rolling briefings from the agents on a 10–60 minute cadence so the project never goes silent.</p>
+    <p class="cd-body">It also knows who's talking to it. Every interaction is identity-aware: trade foremen get answers scoped to their work, clients see what the team has chosen to share, internal cost detail stays internal. The specialist agents trust Canopy to be the gate.</p>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Soul <span class="cd-section-sub">— set at kickoff, rarely changes</span></h3>
+      <ul class="cd-list">
+        <li><code>identity.md</code> — project name (Juan, Sarah, etc.), tone, formality, communication style</li>
+        <li><code>mission.md</code> — the shared project mission. On something like the Tennessee Titans stadium, this captures the ownership's mission, community-impact goals, and what the partnership is for. Canopy embodies it in every interaction.</li>
+        <li><code>values.md</code> — judgment priorities when there's a tradeoff (safety first, citation discipline, confidentiality, no claims without sources)</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Brain <span class="cd-section-sub">— skills Canopy invokes on demand</span></h3>
+      <ul class="cd-list">
+        <li><code>voice-interface.skill</code> — wake-word detection on the project's chosen name, speech-to-text, text-to-speech</li>
+        <li><code>intent-router.skill</code> — parses every query, identifies the right specialist agent(s), dispatches in parallel when a question crosses domains</li>
+        <li><code>conversation-context.skill</code> — maintains thread state per user, per project, across phone, chat, voice, and jobsite endpoints</li>
+        <li><code>identity-and-access.skill</code> — verifies who's speaking, what role they hold, what they're authorized to see; redacts before delivery</li>
+        <li><code>confirmation-gate.skill</code> — handles HITL approvals via voice or chat ("approve this RFI draft?", "send this PCO?")</li>
+        <li><code>multi-modal-input.skill</code> — accepts voice, text, photos, and screenshots as input</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Memory <span class="cd-section-sub">— state that grows over the project</span></h3>
+      <ul class="cd-list">
+        <li><strong>Conversation log</strong> — every Q&amp;A with citations, written to the Project CMC</li>
+        <li><strong>Team roster</strong> — who's on the project, what each person is authorized to see, who reports to whom, who's online right now</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">CMC Interaction</h3>
+      <ul class="cd-list">
+        <li><strong>Reads</strong> — Evidence Packs returned by specialist agents. Canopy never queries the CMC directly. Specialist agents own the citation conventions for their domain — sheet + revision for drawings, section + edition for specs, RFI number + date for RFIs — and translate raw CMC data into a properly cited answer.</li>
+        <li><strong>Writes</strong> — Conversation log to the Project CMC — Q&amp;A, who asked, who answered, what was cited, identity context.</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Sub-agents <span class="cd-section-sub">— autonomous loops</span></h3>
+      <ul class="cd-list">
+        <li><strong>→ Briefing Aggregator</strong> — pulls rolling syncs from main agents every 10–60 minutes and composes daily / weekly digests for the team</li>
+        <li><strong>→ Presence Tracker</strong> — knows who's online, who's where, who's busy; makes sure Canopy addresses people by name and doesn't interrupt deep work</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">How Canopy stays fast</h3>
+      <p class="cd-body">Canopy is the heaviest agent in the system, so speed is non-negotiable. Four mechanisms keep it snappy:</p>
+      <ul class="cd-list">
+        <li><strong>Parallel dispatch</strong> — cross-domain questions fire multiple specialist agents simultaneously, not in sequence</li>
+        <li><strong>Canopy-level cache</strong> — repeat queries ("what's today's plan?") hit a recent-answer cache before going to a specialist</li>
+        <li><strong>Direct conversational replies</strong> — chit-chat, acknowledgments, and conversation management never touch the CMC or an agent</li>
+        <li><strong>Co-location</strong> — specialist agents run next to the CMC on a low-latency path; Canopy is the only component talking across the wire to humans</li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Safety coordination</h3>
+      <p class="cd-body">The Safety Agent owns headcount, muster points, and evacuation routing. During a safety event, Canopy is the voice channel — it speaks for the Safety Agent on every endpoint at once, confirms identities at muster, and calls out who isn't yet accounted for. Safety does the analysis; Canopy makes sure everyone hears it.</p>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Built on</h3>
+      <p class="cd-body">A foundation language model for natural language. The specialist agents are the knowledge. The CMC is the source of truth. Canopy Agent is the conductor — it never speaks for itself, only for what the specialist agents have cited from the CMC.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CMC Section Marker — anchor target for nav CMC button -->
+<div id="cmc-section" class="page" style="width:100%; margin-top:56px; scroll-margin-top: 110px;">
+  <div class="cmc-divider">
+    <h3 class="cmc-divider-label">Compiled Memory Core</h3>
+    <div class="cmc-divider-line"></div>
+  </div>
+</div>
+
+<!-- Source Truth Band inline detail -->
+<div class="page" style="width:100%; margin-top:32px;">
+  <div id="sourceTruth-detail" class="canopy-detail">
+    <div class="cd-eyebrow">CMC Architecture · Write Path</div>
+    <h2 class="cd-title">Source Truth Band</h2>
+    <p class="cd-lead">Immutable. Every source document sealed with a cryptographic hash at ingestion. Nothing here is ever edited.</p>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Components</h3>
+      <ul class="cd-list">
+        <li><strong>Immutable Source Ledger</strong></li>
+        <li><strong>Raw Source Files</strong></li>
+      </ul>
+    </div>
+
+    <div class="cd-section">
+      <p class="cd-body">The Source Truth Band is the foundation of the entire CMC. Every document ingested — drawings, specifications, RFI responses, submittals, field photos, meeting transcripts — is stored here with its hash, page spans, coordinates, timestamp, and provenance sealed permanently at the moment of ingestion.</p>
+      <p class="cd-body">The Source Ledger is append-only. Nothing is edited or deleted. When a document is superseded by a new revision, the new version is added with a pointer to its predecessor; the prior version remains, marked stale. Every claim anywhere in the system traces back to a specific byte range in a specific file stored here.</p>
+      <p class="cd-body"><strong>Hard rule:</strong> No agent can present a fact without at least one source span pointing to a record in this band. This is the contract between CanopyOS and its users.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Compilation Band inline detail -->
+<div class="page" style="width:100%; margin-top:32px;">
+  <div id="compilation-detail" class="canopy-detail">
+    <div class="cd-eyebrow">CMC Architecture · Write Path</div>
+    <h2 class="cd-title">Compilation Band</h2>
+    <p class="cd-lead">Write path — slow, background processing that transforms raw sources into structured, queryable knowledge.</p>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Components</h3>
+      <ul class="cd-list">
+        <li><strong>Capture Layer</strong> — ingests raw files via OCR, structured parsing, chunking, classification, and fingerprinting. Raw files become typed, located, structured data ready for indexing.</li>
+        <li><strong>Hippocampal Index</strong> — binds entities, locations, time references, and relationships across all ingested sources. Builds the contextual graph that lets agents ask cross-document questions — "what do the drawings, specs, and RFIs say about this wall intersection?"</li>
+        <li><strong>Domain Compilers</strong> — specialist compilers for each document type: Spec Book, Drawing set, RFI log, CIL, Change Events, Schedule, Meeting Minutes. Each applies domain-specific extraction logic.</li>
+        <li><strong>Memory Compiler</strong> — extracts claims from Domain Compiler output, normalizes, deduplicates, reconciles conflicts, assigns derivation types (extracted / normalized / inferred / calculated / human_confirmed), and marks uncertainty.</li>
+        <li><strong>Compiled Memory Core</strong> — the output: source-grounded claims, entities, rules, procedures, and summaries. Every item is typed and traceable to the Source Ledger.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Retrieval Band inline detail (scroll target from clicking the Retrieval Band) -->
+<div class="page" style="width:100%; margin-top:32px;">
+  <div id="retrieval-detail" class="canopy-detail">
+    <div class="cd-eyebrow">CMC Architecture · Read Path</div>
+    <h2 class="cd-title">Retrieval Band (CMC's RAG)</h2>
+    <p class="cd-lead">Total response time: 2–4 seconds end-to-end. The retrieval path itself completes in under 300ms. Every answer ships with an Evidence Pack containing full source citations.</p>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">How fast is this?</h3>
+      <p class="cd-body">The full retrieval path — query parsing, parallel index queries across all surfaces, Evidence Pack assembly — completes in under 300 milliseconds. The user-perceived response time is 2–4 seconds total, almost entirely determined by the time the language model takes to compose a cited answer from the Evidence Pack. That is the speed of a fast web search. The difference: the system returns a sourced, cited answer with page-level provenance — not a list of links to go read. Without CanopyOS, the same question routed to a PM or architect takes hours to days.</p>
+    </div>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">Components</h3>
+      <ul class="cd-list">
+        <li><strong>Derived Retrieval Surfaces</strong> — multiple specialized indexes built from the Compiled Memory Core: keyword index, vector index, knowledge graph, timelines, structured tables, and pre-warmed caches. Each surface is optimized for different query types and updated incrementally as the CMC changes. Queries run across relevant surfaces in parallel, not in sequence.</li>
+        <li><strong>Retrieval Orchestrator</strong> — receives the agent query, selects the right surface(s), executes in parallel, and assembles an Evidence Pack. Applies scope precedence (Project CMC → Organization CMC → Reference CMC) and ranks results by confidence. This step typically takes 50–150ms.</li>
+        <li><strong>Evidence Pack</strong> — the atomic output unit. Every pack contains: claim text, source span (page, section, character offset), confidence level (high/medium/low/unknown), derivation type, freshness status, and any known conflicts. No agent presents a claim without a complete Evidence Pack.</li>
+        <li><strong>HITL Gate</strong> — not triggered on every query. Only on high-stakes memory state transitions such as conflict resolution, material change alerts, or high-confidence promotions. When not triggered, pass-through is near-instant. When triggered, a human confirms before the state change becomes active. This is a memory status gate, not a file edit.</li>
+        <li><strong>Agent Answer</strong> — the cited, source-grounded response delivered back through Canopy Agent.</li>
+      </ul>
+    </div>
+
+    <div class="cd-section" style="background: rgba(12,68,124,0.04); padding: 22px 24px; border-radius: 12px; border-top: none; margin-top: 24px;">
+      <h3 class="cd-section-title" style="color:#0C447C;">Where RAG lives in CanopyOS</h3>
+      <p class="cd-body" style="color:#3D4E63;">The Retrieval Band is RAG. Retrieval Augmented Generation is exactly what's happening when the Retrieval Orchestrator queries the surfaces, assembles an Evidence Pack, and hands it to the agent to generate a cited answer. That's the textbook RAG loop — retrieve relevant context, augment the prompt, generate the response.</p>
+      <p class="cd-body" style="color:#3D4E63;"><strong>Where CanopyOS goes further than standard RAG:</strong> Standard RAG is: embed documents → store in a vector database → similarity search → stuff chunks into a prompt → generate answer. It's fast to build and works reasonably well for simple Q&amp;A. The problems show up in construction:</p>
+      <ul class="cd-list" style="margin-bottom:14px;">
+        <li>It has no memory of what changed. A new drawing revision gets ingested and the old chunks are still in there competing for retrieval.</li>
+        <li>It has no provenance chain. You get an answer but can't trace it to a specific page, section, or revision.</li>
+        <li>It treats all content as equal. A superseded spec section ranks the same as the current one.</li>
+        <li>It can't reason across document types. Connecting a drawing detail to an RFI response to a submittal approval requires understanding relationships, not just similarity.</li>
+      </ul>
+      <p class="cd-body" style="color:#3D4E63;"><strong>What the CMC adds on top of RAG:</strong> The Compilation Band — the Hippocampal Index, Domain Compilers, Memory Compiler — is what turns raw documents into structured, typed, versioned, conflict-checked knowledge before retrieval ever happens. By the time a query hits the Retrieval Band, it's not searching raw chunks. It's querying compiled, source-grounded claims with freshness status, confidence levels, and known conflicts already flagged.</p>
+      <p class="cd-body" style="color:#3D4E63;">So the honest answer: CanopyOS contains RAG, but RAG is the read path only. The CMC is what makes that retrieval trustworthy enough to put in front of an owner or use to make field decisions. Standard RAG without the compilation layer would be a liability in construction — you'd be retrieving from a pile of unreconciled documents with no way to know if what came back is current, superseded, or contradicted somewhere else in the stack.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Sleep · Consolidation inline detail -->
+<div class="page" style="width:100%; margin-top:32px;">
+  <div id="sleep-detail" class="canopy-detail">
+    <div class="cd-eyebrow">CMC Architecture · Maintenance</div>
+    <h2 class="cd-title">Sleep · Consolidation</h2>
+    <p class="cd-lead">Background maintenance cycle — runs continuously, invisible to users. Keeps the CMC fresh, consistent, and contradiction-free.</p>
+
+    <div class="cd-section">
+      <h3 class="cd-section-title">What runs in the background</h3>
+      <ul class="cd-list">
+        <li><strong>Delta compilation</strong> — re-processes changed or newly ingested documents without triggering a full rebuild. Only affected portions of the CMC are recompiled, keeping the system responsive even on large, document-heavy projects.</li>
+        <li><strong>Contradiction detection</strong> — scans all compiled claims for cross-source conflicts. When contradictions are found they are surfaced — never silently resolved. Conflicting claims remain in the CMC marked with conflict status until a human confirms resolution through the HITL gate.</li>
+        <li><strong>Stale memory cleanup</strong> — when a source document is superseded, all claims derived from it are marked stale. Freshness metadata propagates through the dependency graph to any downstream claims.</li>
+        <li><strong>Deduplication</strong> — identifies near-duplicate claims from multiple sources and consolidates them while preserving all original citations. No source reference is ever discarded.</li>
+        <li><strong>Graph maintenance</strong> — updates the Hippocampal Index as new relationships emerge from incoming documents. Dependency links between entities are continuously refined.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- /how-it-works -->
+
+<script>
+'use strict';
+
+// ── AGENT DATA ──────────────────────────────────────────────
+const AGENTS = [
+  {
+    id: 'document', icon: '📄', name: 'Document Agent', tagline: 'Project CMC Owner',
+    shortDesc: 'Document Agent is the foundation of CanopyOS. Every drawing, spec, bulletin, ASI, RFI response, submittal, field photo, and transcript enters the system here — versioned, fingerprinted, and compiled into the Project CMC. No other agent can present a fact without a source Document Agent sealed. When a revision comes in, it pushes change alerts to every sibling agent whose domain was touched.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">project-indexer.skill</span><span class="tip-dim"> — indexes project folder, splits drawings from documents</span></div><div class="tip-breakdown-row"><span class="tip-skill">drawings-analyser.skill</span><span class="tip-dim"> — per-sheet analysis, symbol library, cross-reference graph</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Source Truth Band (immutable ledger) · Compilation Band (all typed claims)</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Ingestion Sub-agent</span><span class="tip-dim"> — receives, OCRs, classifies, fingerprints incoming files</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Change Alert Sub-agent</span><span class="tip-dim"> — watches for revisions, pushes alerts to sibling agents</span></div></div>',
+    desc: 'Ingests and processes every project source document — drawings, specifications, addenda, RFI responses, submittals, and field photos. Owns the Project CMC. Every document enters the system through this agent\'s compilation pipeline. Nothing reaches other agents without passing through Document Agent first.',
+    cmc: 'Primary writer to the Project CMC. Runs every source document through the full Compilation Band — OCR, chunking, classification, and fingerprinting. Seals the immutable Source Ledger with cryptographic hashes. All other agents query what Document Agent compiled.',
+  },
+  {
+    id: 'rfi', icon: '❓', name: 'RFI Agent', tagline: 'Information Requests',
+    shortDesc: 'Questions come from the field, from your engineers, from trade contractors — anyone who hits something the drawings or specs don\'t resolve. RFI Agent checks the project CMC first. If the answer isn\'t there, it recommends an RFI, drafts it for your review and approval, and routes it to the right design consultant. From there it owns the log — tracking the response window, sending deadline reminders to the architect, and looping back to your team if more clarification is needed before the answer closes.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">rfi-drafter.skill</span><span class="tip-dim"> — draft, format, route</span></div><div class="tip-breakdown-row"><span class="tip-lbl">Reference CMC</span><span class="tip-dim"> — domain knowledge (the engineering "why")</span></div><div class="tip-breakdown-row"><span class="tip-lbl">Project CMC</span><span class="tip-dim"> — project-specific facts, contacts, log</span></div></div>',
+    desc: 'Drafts, routes, and tracks Requests for Information. Monitors turnaround windows and flags RFIs that are stalled or at risk of impacting field work before the required answer date. An RFI processing normally through its window is not a constraint — it becomes one only when the window is threatened.',
+    cmc: 'Reads the Compilation Band to identify gaps in project documentation. Writes resolved RFI answers back to the Project CMC as source-grounded claims. Escalates stalled RFIs to the Constraint Agent when turnaround windows are threatened.',
+  },
+  {
+    id: 'change', icon: '🔄', name: 'Change Mgmt', tagline: 'Change Events',
+    shortDesc: 'Change Management Agent owns the full change lifecycle — from the first signal that something has changed (a revised drawing, an owner directive, an RFI response that adds scope) through PCO creation, pricing, Time Impact Analysis, formal submission to the owner, executed change orders, and commitment change orders back to every affected sub. Every step is logged, timestamped, and traceable. Missing a notice deadline forfeits the right to claim — this agent makes sure that never happens.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">contract-administrator.skill</span><span class="tip-dim"> — notice deadlines, clause citations</span></div><div class="tip-breakdown-row"><span class="tip-skill">site-report.skill</span><span class="tip-dim"> — detects change triggers from field notes &amp; voice</span></div><div class="tip-breakdown-row"><span class="tip-skill">line-item-pricing.skill</span><span class="tip-dim"> — full cost stack assembly</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — RFI Log · Drawing revisions · Contract · Schedule</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Change Event Log · PCO Log · CO Log · Commitment Log</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Trigger Detector</span><span class="tip-dim"> — watches all project data for change signals</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Log Manager</span><span class="tip-dim"> — PCO log, CO log, Commitment log, Contingency tracker</span></div></div>',
+    desc: 'Detects, prices, and tracks change events. Monitors the project for scope changes, unforeseen conditions, and owner-directed modifications. Maintains the change log and links every event to its schedule and cost impacts.',
+    cmc: 'Reads drawing and spec data from Project CMC to identify design changes. Writes change event records with cost and schedule impacts back to the CMC. Coordinates with the Scheduling Agent for time impact analysis.',
+  },
+  {
+    id: 'cil', icon: '📦', name: 'CIL Agent', tagline: 'Submittals & Procurement',
+    shortDesc: 'CIL Agent owns the Contract Items List — the single authoritative log of every submittal, material order, buyout commitment, and procurement deadline on the project. Roughly 35 columns spanning identity (item number, spec section, submittal type), responsibility (sub, A/E reviewer, ball-in-court), the A/E review cycle, the procurement and material layer, schedule integration, and cross-references to RFIs and change orders. The agent maintains it daily, calculates every backward date from the CPM installation activity — ROJ Date → Order Date → Submit-to-A/E Date — with contractual review periods built in, and flags long-lead items that drive the schedule rather than follow it. A CIL item tracking normally through its process is not a constraint — it becomes one only when something in the chain breaks: a rejected submittal, an A/E reviewer running over the contractual review period, a supplier slipping a delivery. That\'s when CIL Agent hands the item off. Rejected submittals that change scope go to Change Management Agent. Rejections caused by design ambiguity go to RFI Agent. Anything that threatens an installation date goes to Constraint Agent. CIL Agent is the air-traffic control tower; the other agents pick it up from there.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">cil-builder.skill</span><span class="tip-dim"> — generates initial rows from the spec book at preconstruction</span></div><div class="tip-breakdown-row"><span class="tip-skill">submittal-cycle.skill</span><span class="tip-dim"> — tracks every submittal through the A/E review cycle</span></div><div class="tip-breakdown-row"><span class="tip-skill">roj-calculator.skill</span><span class="tip-dim"> — backward-calculates ROJ → Order → Submit dates from the CPM</span></div><div class="tip-breakdown-row"><span class="tip-skill">procurement-tracker.skill</span><span class="tip-dim"> — material order, PO, delivery, buyout, long-lead flags</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — Spec Book · Drawings · CPM Schedule · RFI Log · Change Events · Subcontract Buyout Data</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Contract Items List (all ~35 columns) · submittal status · procurement dates · long-lead flags · A/E review timestamps</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Submittal Cycle Tracker</span><span class="tip-dim"> — owns the A/E review columns; flags reviewers running long (timestamps = delay-claim evidence)</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Procurement Tracker</span><span class="tip-dim"> — buyout → delivery; flags long-lead items</span></div></div>',
+    desc: 'Owns the Contract Items List — the authoritative log of every submittal, material order, and procurement deadline on the project. ~35 columns across identity, responsibility, A/E review cycle, procurement, schedule integration, and cross-references. Calculates every backward date from the CPM installation activity with contractual review periods built in.',
+    cmc: 'Reads spec book, drawings, CPM schedule, RFI log, change events, and subcontract buyout data from Project CMC. Writes the full Contract Items List with all submittal status, procurement dates, long-lead flags, and A/E review timestamps. Hands off to Constraint Agent when something in the chain breaks.',
+  },
+  {
+    id: 'production', icon: '📊', name: 'Production Agent', tagline: 'Field Progress',
+    shortDesc: 'Production Agent owns the ground truth of what\'s actually built on the project and how it compares to the plan. It measures against the weekly work plan — roughly 70 task commitments from 70 trade crews — and checks daily at the afternoon huddle whether each item got done as intended so tomorrow stays on plan. Gaps surface the same day, not at week\'s end.<br><br>It fuses capture data from hardhat 360° cameras, indoor drones, ground rovers, and LiDAR scanners into a single as-built state, then compares it against the BIM model room by room. Field staff can ask it anything at any granularity and get a cited answer in seconds.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">weekly-work-plan.skill</span><span class="tip-dim"> — captures the next week\'s task commitments at the planning meeting</span></div><div class="tip-breakdown-row"><span class="tip-skill">daily-huddle.skill</span><span class="tip-dim"> — runs the afternoon end-of-day check; reports the day\'s completion percentage</span></div><div class="tip-breakdown-row"><span class="tip-skill">capture-fusion.skill</span><span class="tip-dim"> — fuses 360° cam, drone, rover, LiDAR into a single as-built state</span></div><div class="tip-breakdown-row"><span class="tip-skill">as-built-vs-as-designed.skill</span><span class="tip-dim"> — compares as-built vs. BIM; flags variances</span></div><div class="tip-breakdown-row"><span class="tip-skill">production-query.skill</span><span class="tip-dim"> — answers status questions at any granularity — floor, area, room, trade</span></div><div class="tip-breakdown-row"><span class="tip-skill">variance-tracker.skill</span><span class="tip-dim"> — surfaces ahead / behind / blocked; trends across days and weeks</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — BIM Model · Drawings · Specs · CPM Schedule · 6–8 Week Lookahead · Capture Data Feeds · Trade Contractor Commitments · Daily Site Reports</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Daily Completion Records · As-Built State (per area / floor / room) · Production Variance Log · Capture Timestamps · Trade-by-Trade Completion</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Capture Agent</span><span class="tip-dim"> — aggregates hardhat 360° cams, rovers, indoor drones, LiDAR</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> 3D Model Agent</span><span class="tip-dim"> — owns BIM; runs as-built vs. as-designed comparison</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Daily Huddle Agent</span><span class="tip-dim"> — runs the afternoon huddle; tracks the "70-for-70" check</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Weekly Work Plan Agent</span><span class="tip-dim"> — captures next week\'s commitments; feeds actuals into the lookahead</span></div></div>',
+    desc: 'Owns the ground truth of what\'s actually built versus the plan. Measures against the weekly work plan and runs a daily check at the afternoon huddle. Fuses capture data from hardhat 360° cameras, indoor drones, ground rovers, and LiDAR scanners into a single as-built state; compares against the BIM model room by room.',
+    cmc: 'Reads BIM model, drawings, specs, CPM schedule, 6–8 week lookahead, capture data feeds, trade contractor commitments, and daily site reports. Writes daily completion records, as-built state (per area, floor, room), production variance log, capture timestamps, and trade-by-trade completion data.',
+  },
+  {
+    id: 'code', icon: '📋', name: 'Code Agent', tagline: 'Codes & Standards',
+    shortDesc: 'Code Agent owns the jurisdiction-aware standards corpus — building codes, life safety, structural, MEP, accessibility, and contractual standards — and runs compliance checks against every other agent\'s output. At project kickoff, during the permit stage, the team inputs the state, county, city, and utility provider. From that point on, Code Agent loads the right edition of every applicable standard with jurisdiction tags attached. When the RFI Agent drafts an answer, the Document Agent indexes a new revision, or Production Agent flags an as-built deviation, Code Agent checks it against the relevant code and surfaces conflicts before they become failed inspections.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">jurisdiction-loader.skill</span><span class="tip-dim"> — loads applicable codes by state / county / city / utility at kickoff</span></div><div class="tip-breakdown-row"><span class="tip-skill">code-citation.skill</span><span class="tip-dim"> — exact edition, section, paragraph on every answer — no paraphrasing</span></div><div class="tip-breakdown-row"><span class="tip-skill">compliance-check.skill</span><span class="tip-dim"> — pass / fail / flag every agent\'s output against the corpus</span></div><div class="tip-breakdown-row"><span class="tip-skill">code-update-watcher.skill</span><span class="tip-dim"> — watches for new editions, amendments, and errata</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — Drawings · Specs · RFI drafts · Submittals · Change Orders · As-Built Captures · Inspection Records</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Reference CMC (codes by jurisdiction + edition) · Compliance Check Results · Citation Chains</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Compliance Agent</span><span class="tip-dim"> — checks every other agent\'s output against the loaded codes</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Code Update Watcher</span><span class="tip-dim"> — monitors ICC, NFPA, ACI, ASHRAE, AIA, OSHA, state, local, utility</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Inspection Liaison</span><span class="tip-dim"> — pre-flights upcoming inspections against the as-built</span></div></div>',
+    desc: 'Owns the jurisdiction-aware standards corpus and runs compliance checks against every other agent\'s output. Loaded at project kickoff based on state, county, city, and utility provider.',
+    cmc: 'Primary writer to the Reference CMC. Maintains edition, jurisdiction, and date metadata for all standards. Reads project documents and agent outputs to run compliance checks. All citations include exact edition and section — no paraphrasing.',
+  },
+  {
+    id: 'safety', icon: '⚠️', name: 'Safety Agent', tagline: 'Safety Metrics & Compliance Data',
+    shortDesc: 'Safety Agent owns the metrics and data behind project safety — not safety itself. Humans on the team own that. The agent keeps a real-time roster of who is on site so everyone can be accounted for at the muster point during an event, tracks whether recurring safety requirements (morning huddles, pre-task plans, toolbox talks, inspections, postings) happened on cadence, and — on voice command from the field — initiates a Co-Learning Investigation (CLI) when an incident occurs, routes the form to the right people, ingests photos and video as they come in, and tracks it through to closure.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">muster-roll-call.skill</span><span class="tip-dim"> — during an event, queries the live roster and runs roll-call</span></div><div class="tip-breakdown-row"><span class="tip-skill">compliance-tracker.skill</span><span class="tip-dim"> — tracks whether recurring safety requirements happened on cadence; holds the right people accountable when they didn\'t</span></div><div class="tip-breakdown-row"><span class="tip-skill">cli-initiator.skill</span><span class="tip-dim"> — voice-triggered Co-Learning Investigation form; auto-routes by text / email; tracks to closure</span></div><div class="tip-breakdown-row"><span class="tip-skill">media-ingest.skill</span><span class="tip-dim"> — pulls photos, video, voice notes into the CLI as they come in</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — Site Roster · Trade Schedule · Project Safety Plan · OSHA + jurisdiction safety standards · Capture Data (entry/exit only)</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Headcount Log · Muster Records · Safety Cadence Compliance Log · CLI Documents · Incident Records</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agent</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Headcount Agent</span><span class="tip-dim"> — always-on entry/exit tracking; powers the real-time roster that other skills query when they need the current site population</span></div></div>',
+    desc: 'Owns the metrics and data behind project safety — not safety itself, which humans own. Keeps a real-time roster for muster, tracks recurring safety requirement completion, and initiates Co-Learning Investigations (CLIs) on voice command when an incident occurs.',
+    cmc: 'Reads site roster, trade schedule, project safety plan, OSHA and jurisdiction safety standards, and capture data for entry/exit. Writes the headcount log, muster records, safety cadence compliance log, CLI documents, and incident records.',
+  },
+  {
+    id: 'scheduling', icon: '📅', name: 'Scheduling Agent', tagline: 'Takt + CPM Planning',
+    shortDesc: 'Scheduling Agent lives inside the project\'s scheduling software. Field operations drive every update (heavy HITL); the agent ensures cadence, captures actuals from the field, syncs with the BIM model, and works hand-in-hand with Production Agent. It also sits in field meetings on speaker — listening to GC and trade-partner coordination and capturing schedule-relevant inputs in real time. Anyone can ask it: where are we today? Ahead or behind? By how many days?<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-skill">schedule-sync.skill</span><span class="tip-dim"> — bi-directional sync between scheduling software (P6, vPlanner, Touchplan, MS Project) and the CMC</span></div><div class="tip-breakdown-row"><span class="tip-skill">actuals-ingest.skill</span><span class="tip-dim"> — captures actual starts, finishes, and % complete from field inputs</span></div><div class="tip-breakdown-row"><span class="tip-skill">schedule-query.skill</span><span class="tip-dim"> — answers any schedule question in plain language (status today, days ahead / behind, when does X start)</span></div><div class="tip-breakdown-row"><span class="tip-skill">bim-link.skill</span><span class="tip-dim"> — syncs schedule activities with BIM model elements via Autodesk Construction Cloud or equivalent</span></div><div class="tip-breakdown-row"><span class="tip-skill">meeting-listener.skill</span><span class="tip-dim"> — listens on speaker during field meetings; captures schedule-relevant coordination between GC and trades in real time</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — P6 / vPlanner / Touchplan Schedule · BIM Model · Production Actuals · Trade Commitments · Field Meeting Audio · Daily Huddle Data</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Schedule State (current vs. baseline) · Variance Reports · Activity Status · Update Log (who updated what, when)</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agent</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Cadence Monitor</span><span class="tip-dim"> — watches for missed schedule update windows; pings the right humans (PM, super, schedule lead) when an update is overdue</span></div></div>',
+    desc: 'Lives inside the project\'s scheduling software. Field operations drive updates (heavy HITL); the agent ensures cadence, captures actuals, syncs with BIM, and works hand-in-hand with Production Agent. Sits in field meetings on speaker. Answers schedule questions in plain language.',
+    cmc: 'Reads P6 / vPlanner / Touchplan schedule, BIM model, production actuals, trade commitments, field meeting audio, and daily huddle data. Writes schedule state vs. baseline, variance reports, activity status, and an update log.',
+  },
+  {
+    id: 'constraint', icon: '🔒', name: 'Constraint Agent', tagline: 'Constraint Mining',
+    shortDesc: 'The Constraint Agent vets possible constraints: it searches the CMC, drawings, RFI log, and submittals to see if the answer already exists. If it finds a resolution, the constraint never hits the log. If it confirms the constraint is real, it goes to a human for approval before logging — HITL gate. Once on the log it\'s managed ruthlessly: every constraint has a responsible contractor, a responsible person, and a Date Needed By. The agent tracks each one through closure, sends deadline reminders to the responsible party as the Date Needed By approaches, escalates to the right meeting when closure is at risk, and removes it from the log when it\'s resolved.<div class="tip-breakdown"><div class="tip-breakdown-row"><span class="tip-lbl">CMC Reads</span><span class="tip-dim"> — Lookahead · Contract Schedule · RFI Log · Submittals · Drawings · Change Events</span></div><div class="tip-breakdown-row"><span class="tip-lbl">CMC Writes</span><span class="tip-dim"> — Constraint Log · responsible party · Date Needed By · escalation routing</span></div></div><div class="tip-breakdown" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.4); margin-bottom:7px;">Sub-agents</div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Log Manager</span><span class="tip-dim"> — owns all columns, tracks status meeting to meeting</span></div><div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px; line-height:1;">→</span><span class="tip-lbl"> Deadline Notifier</span><span class="tip-dim"> — sends reminders to responsible parties as Date Needed By approaches</span></div></div>',
+    desc: 'Proactively mines the 6–8 week lookahead for unknowns and uncertainties that will stop planned work. Owns the Constraint Log. Calculates Date Needed By by walking the resolution chain backwards from the Ready-on-Job date — accounting for decisions, fabrication time, delivery, inspections, and approvals.',
+    cmc: 'Reads lookahead and contract schedule from Scheduling Agent. Reads RFI status, CIL chain data, and open change events from sibling agents via Project CMC. Writes constraint records with Date Needed By, responsible party, and escalation routing.',
+  },
+];
+
+// ── BAND DATA ───────────────────────────────────────────────
+const BANDS = {
+  sourceTruth: {
+    tag: 'CMC Architecture · Write Path',
+    title: 'Source Truth Band',
+    subtitle: 'Immutable. Every source document sealed with a cryptographic hash at ingestion. Nothing here is ever edited.',
+    nodes: ['Immutable Source Ledger', 'Raw Source Files'],
+    body: [
+      'The Source Truth Band is the foundation of the entire CMC. Every document ingested — drawings, specifications, RFI responses, submittals, field photos, meeting transcripts — is stored here with its hash, page spans, coordinates, timestamp, and provenance sealed permanently at the moment of ingestion.',
+      'The Source Ledger is append-only. Nothing is edited or deleted. When a document is superseded by a new revision, the new version is added with a pointer to its predecessor; the prior version remains, marked stale. Every claim anywhere in the system traces back to a specific byte range in a specific file stored here.',
+      'Hard rule: No agent can present a fact without at least one source span pointing to a record in this band. This is the contract between CanopyOS and its users.',
+    ],
+  },
+  compilation: {
+    tag: 'CMC Architecture · Write Path',
+    title: 'Compilation Band',
+    subtitle: 'Write path — slow, background processing that transforms raw sources into structured, queryable knowledge.',
+    nodes: ['Capture Layer', 'Hippocampal Index', 'Domain Compilers', 'Memory Compiler', 'Compiled Memory Core'],
+    body: [
+      'Capture Layer: Ingests raw files via OCR, structured parsing, chunking, classification, and fingerprinting. Raw files become typed, located, structured data ready for indexing.',
+      'Hippocampal Index: Binds entities, locations, time references, and relationships across all ingested sources. Builds the contextual graph that lets agents ask cross-document questions — "what do the drawings, specs, and RFIs say about this wall intersection?"',
+      'Domain Compilers: Specialist compilers for each document type — Spec Book, Drawing set, RFI log, CIL, Change Events, Schedule, Meeting Minutes. Each applies domain-specific extraction logic.',
+      'Memory Compiler: Extracts claims from Domain Compiler output, normalizes, deduplicates, reconciles conflicts, assigns derivation types (extracted / normalized / inferred / calculated / human_confirmed), and marks uncertainty.',
+      'Compiled Memory Core: The output — source-grounded claims, entities, rules, procedures, and summaries. Every item is typed and traceable to the Source Ledger.',
+    ],
+  },
+  retrieval: {
+    tag: 'CMC Architecture · Read Path',
+    title: 'Retrieval Band (CMC\'s RAG)',
+    subtitle: 'Total response time: 2–4 seconds end-to-end. The retrieval path itself completes in under 300ms. Every answer ships with an Evidence Pack containing full source citations.',
+    nodes: ['Derived Retrieval Surfaces', 'Retrieval Orchestrator', 'Evidence Pack', 'HITL Gate', 'Agent Answer'],
+    body: [
+      'How fast is this? The full retrieval path — query parsing, parallel index queries across all surfaces, Evidence Pack assembly — completes in under 300 milliseconds. The user-perceived response time is 2–4 seconds total, almost entirely determined by the time the language model takes to compose a cited answer from the Evidence Pack. That is the speed of a fast web search. The difference: the system returns a sourced, cited answer with page-level provenance — not a list of links to go read. Without CanopyOS, the same question routed to a PM or architect takes hours to days.',
+      'Derived Retrieval Surfaces: Multiple specialized indexes built from the Compiled Memory Core — keyword index, vector index, knowledge graph, timelines, structured tables, and pre-warmed caches. Each surface is optimized for different query types and updated incrementally as the CMC changes. Queries run across relevant surfaces in parallel, not in sequence.',
+      'Retrieval Orchestrator: Receives the agent query, selects the right surface(s), executes in parallel, and assembles an Evidence Pack. Applies scope precedence (Project CMC → Organization CMC → Reference CMC) and ranks results by confidence. This step typically takes 50–150ms.',
+      'Evidence Pack: The atomic output unit. Every pack contains: claim text, source span (page, section, character offset), confidence level (high/medium/low/unknown), derivation type, freshness status, and any known conflicts. No agent presents a claim without a complete Evidence Pack.',
+      'HITL Gate: Not triggered on every query — only on high-stakes memory state transitions such as conflict resolution, material change alerts, or high-confidence promotions. When not triggered, pass-through is near-instant. When triggered, a human confirms before the state change becomes active. This is a memory status gate, not a file edit.',
+      '<span style="color:#0C447C !important; font-style:italic; display:block;"><strong>Where RAG lives:</strong> The Retrieval Band is RAG. Retrieval Augmented Generation is exactly what\'s happening when the Retrieval Orchestrator queries the surfaces, assembles an Evidence Pack, and hands it to the agent to generate a cited answer. That\'s the textbook RAG loop — retrieve relevant context, augment the prompt, generate the response.<br><br><strong>Where CanopyOS goes further than standard RAG:</strong> Standard RAG is: embed documents → store in a vector database → similarity search → stuff chunks into a prompt → generate answer. It\'s fast to build and works reasonably well for simple Q&amp;A. The problems show up in construction:<br><ul style="margin:8px 0 8px 20px; padding:0;"><li style="margin-bottom:6px;">It has no memory of what changed. A new drawing revision gets ingested and the old chunks are still in there competing for retrieval.</li><li style="margin-bottom:6px;">It has no provenance chain. You get an answer but can\'t trace it to a specific page, section, or revision.</li><li style="margin-bottom:6px;">It treats all content as equal. A superseded spec section ranks the same as the current one.</li><li style="margin-bottom:6px;">It can\'t reason across document types. Connecting a drawing detail to an RFI response to a submittal approval requires understanding relationships, not just similarity.</li></ul><strong>What the CMC adds on top of RAG:</strong> The Compilation Band — the Hippocampal Index, Domain Compilers, Memory Compiler — is what turns raw documents into structured, typed, versioned, conflict-checked knowledge before retrieval ever happens. By the time a query hits the Retrieval Band, it\'s not searching raw chunks. It\'s querying compiled, source-grounded claims with freshness status, confidence levels, and known conflicts already flagged.<br><br>So the honest answer: CanopyOS contains RAG, but RAG is the read path only. The CMC is what makes that retrieval trustworthy enough to put in front of an owner or use to make field decisions. Standard RAG without the compilation layer would be a liability in construction — you\'d be retrieving from a pile of unreconciled documents with no way to know if what came back is current, superseded, or contradicted somewhere else in the stack.</span>',
+    ],
+  },
+  sleep: {
+    tag: 'CMC Architecture · Maintenance',
+    title: 'Sleep · Consolidation',
+    subtitle: 'Background maintenance cycle — runs continuously, invisible to users. Keeps the CMC fresh, consistent, and contradiction-free.',
+    nodes: [],
+    body: [
+      'Delta compilation: Re-processes changed or newly ingested documents without triggering a full rebuild. Only affected portions of the CMC are recompiled, keeping the system responsive even on large, document-heavy projects.',
+      'Contradiction detection: Scans all compiled claims for cross-source conflicts. When contradictions are found they are surfaced — never silently resolved. Conflicting claims remain in the CMC marked with conflict status until a human confirms resolution through the HITL gate.',
+      'Stale memory cleanup: When a source document is superseded, all claims derived from it are marked stale. Freshness metadata propagates through the dependency graph to any downstream claims.',
+      'Deduplication: Identifies near-duplicate claims from multiple sources and consolidates them while preserving all original citations. No source reference is ever discarded.',
+      'Graph maintenance: Updates the Hippocampal Index as new relationships emerge from incoming documents. Dependency links between entities are continuously refined.',
+    ],
+  },
+};
+
+// ── SCOPE TIER DATA ──────────────────────────────────────────
+const TIERS = [
+  {
+    tag: 'Scope Hierarchy · Highest Precedence',
+    title: 'Project CMC',
+    subtitle: 'Per-construction-project. Authoritative for all project-specific facts. Always consulted first.',
+    nodes: ['Drawings', 'Specifications', 'RFI Responses', 'Submittals', 'Change Orders', 'Field Reports', 'Meeting Minutes'],
+    body: [
+      'The Project CMC is the authoritative memory for a specific construction project. It contains all project-specific source documents and the compiled knowledge derived from them.',
+      'When any agent answers a question, the Project CMC is always consulted first and its content takes precedence over Organization CMC or Reference CMC — even when a company SOP or a code section says something different. The project documents govern.',
+      'Owned by the Document Agent. Every document that enters a project is processed through Document Agent\'s compilation pipeline and stored here with full source provenance.',
+    ],
+  },
+  {
+    tag: 'Scope Hierarchy · Advisory',
+    title: 'Organization CMC',
+    subtitle: 'Company memory. Advisory — supplements Project CMC when no project-specific answer exists. Never overrides.',
+    nodes: ['Standard Operating Procedures', 'Document Templates', 'Lessons Learned', 'Preferred Practices'],
+    body: [
+      'The Organization CMC holds the company\'s accumulated institutional knowledge — standard operating procedures, document templates, lessons learned from prior projects, and preferred construction practices.',
+      'It is strictly advisory. It fills gaps when the Project CMC doesn\'t contain a specific answer, but it never overrides project documentation. If a project spec contradicts a company SOP, the spec governs.',
+      'Typically maintained at the company level, not by individual project teams. Content added here becomes available to all projects within the organization.',
+    ],
+  },
+  {
+    tag: 'Scope Hierarchy · External Reference',
+    title: 'Reference CMC',
+    subtitle: 'External authorities: codes, standards, manufacturer data, jurisdictional requirements. Owned by Code Agent.',
+    nodes: ['Building Codes', 'OSHA Regulations', 'Manufacturer Technical Data', 'Industry Standards (ACI, AISC, ASTM)', 'Jurisdictional Requirements'],
+    body: [
+      'The Reference CMC holds external authoritative references: building codes, OSHA regulations, manufacturer technical data, industry standards, and jurisdiction-specific requirements.',
+      'Owned by the Code Agent, which maintains edition, jurisdiction, and effective-date metadata for every reference. When a code changes editions, the new version is added alongside the prior edition (marked superseded). Both remain queryable — useful when a project was permitted under a prior code cycle.',
+      'The lowest precedence tier. Project CMC and Organization CMC both take precedence when they contain relevant answers. Reference CMC answers are always cited with the exact edition, section number, and effective date.',
+    ],
+  },
+];
+
+// ── ORBITAL ANIMATION ────────────────────────────────────────
+const ORBIT_R = 300;
+const CX = 430, CY = 700;
+const HALF = 46;          // half of 93px node
+const PERIOD = 34000;     // 34s per full revolution
+
+let orbitAngle = 0;
+let prevTs = null;
+let paused = false;   // true when agent is selected (clicked)
+let hovering = false; // true when mouse is over any agent node
+let modalOpen = false; // true when any modal is open
+let activeAgent = null;
+
+function buildAgentNodes() {
+  const arena = document.getElementById('arena');
+  AGENTS.forEach(ag => {
+    const el = document.createElement('div');
+    el.className = 'agent-node';
+    el.id = 'ag-' + ag.id;
+    el.innerHTML =
+      '<div class="agent-bubble">' +
+        '<div class="a-icon">' + ag.icon + '</div>' +
+        '<div class="agent-name-lbl">' + ag.name + '</div>' +
+      '</div>' +
+      '<div class="agent-tip">' + ag.shortDesc + '</div>';
+    // click panel disabled — hover tooltip only
+    el.addEventListener('mouseenter', () => {
+      hovering = true;
+      document.querySelector('.cmc-wrapper').classList.add('agent-hover');
+      document.getElementById('cmcCircle').classList.add('agent-hover');
+      document.getElementById('orbitRing').classList.add('orbit-glow');
+      // Position shared fixed tooltip
+      const tip = document.getElementById('agentTooltip');
+      tip.innerHTML = ag.shortDesc;
+      const rect = el.getBoundingClientRect();
+      const TIP_W = 580, GAP = 12, ARROW = 6;
+      const left = Math.min(Math.max(rect.left + rect.width/2 - TIP_W/2, 8), window.innerWidth - TIP_W - 8);
+      const spaceAbove = rect.top;
+      if (spaceAbove > 200) {
+        // Show above
+        tip.className = 'tip-above';
+        tip.style.left = left + 'px';
+        tip.style.top = '';
+        tip.style.bottom = (window.innerHeight - rect.top + GAP) + 'px';
+      } else {
+        // Show below
+        tip.className = 'tip-below';
+        tip.style.left = left + 'px';
+        tip.style.bottom = '';
+        tip.style.top = (rect.bottom + GAP) + 'px';
+      }
+      requestAnimationFrame(() => tip.classList.add('visible'));
+    });
+    el.addEventListener('mouseleave', () => {
+      hovering = false;
+      document.querySelector('.cmc-wrapper').classList.remove('agent-hover');
+      document.getElementById('cmcCircle').classList.remove('agent-hover');
+      document.getElementById('orbitRing').classList.remove('orbit-glow');
+      const tip = document.getElementById('agentTooltip');
+      tip.classList.remove('visible');
+    });
+    arena.appendChild(el);
+  });
+}
+
+function positionAgents(a) {
+  AGENTS.forEach((ag, i) => {
+    const theta = a + (2 * Math.PI / AGENTS.length) * i - Math.PI / 2;
+    const x = CX + ORBIT_R * Math.cos(theta);
+    const y = CY + ORBIT_R * Math.sin(theta);
+    const el = document.getElementById('ag-' + ag.id);
+    if (!el) return;
+    el.style.left = (x - HALF) + 'px';
+    el.style.top  = (y - HALF) + 'px';
+    // Tooltip points down when agent is in upper arena half
+    el.classList.toggle('tip-below', y > CY);
+  });
+}
+
+function raf(ts) {
+  if (prevTs === null) prevTs = ts;
+  if (!paused && !hovering && !modalOpen) orbitAngle += (2 * Math.PI / PERIOD) * (ts - prevTs);
+  prevTs = ts;
+  positionAgents(orbitAngle);
+  requestAnimationFrame(raf);
+}
+
+// ── AGENT CLICK ──────────────────────────────────────────────
+function clickAgent(id) {
+  if (activeAgent === id) { closeAgentPanel(); return; }
+  if (activeAgent) document.getElementById('ag-' + activeAgent).classList.remove('selected');
+  activeAgent = id;
+  document.getElementById('ag-' + id).classList.add('selected');
+  paused = true;
+
+  const ag = AGENTS.find(a => a.id === id);
+  document.getElementById('apIcon').textContent    = ag.icon;
+  document.getElementById('apName').textContent    = ag.name;
+  document.getElementById('apTagline').textContent = ag.tagline;
+  document.getElementById('apDesc').textContent    = ag.desc;
+  document.getElementById('apCmc').textContent     = ag.cmc;
+
+  document.getElementById('cmcDefault').classList.add('hidden');
+  document.getElementById('cmcAgentPanel').classList.add('visible');
+}
+
+function closeAgentPanel() {
+  if (activeAgent) {
+    document.getElementById('ag-' + activeAgent).classList.remove('selected');
+    activeAgent = null;
+  }
+  document.getElementById('cmcAgentPanel').classList.remove('visible');
+  document.getElementById('cmcDefault').classList.remove('hidden');
+  paused = false;
+}
+
+// ── MODALS ───────────────────────────────────────────────────
+function openBandModal(key)  { showModal(BANDS[key]); }
+function openTierModal(idx)  { showModal(TIERS[idx]); }
+
+function showModal(d) {
+  if (!d) return;
+  document.getElementById('modalTag').textContent      = d.tag;
+  document.getElementById('modalTitle').textContent    = d.title;
+  document.getElementById('modalSubtitle').textContent = d.subtitle;
+
+  const nodesEl = document.getElementById('modalNodes');
+  nodesEl.innerHTML = '';
+  if (d.nodes && d.nodes.length) {
+    d.nodes.forEach(n => {
+      const s = document.createElement('span');
+      s.className = 'modal-node';
+      s.textContent = n;
+      nodesEl.appendChild(s);
+    });
+    document.getElementById('modalDivider').style.display = 'block';
+  } else {
+    document.getElementById('modalDivider').style.display = 'none';
+  }
+
+  const bodyEl = document.getElementById('modalBody');
+  bodyEl.innerHTML = '';
+  (d.body || []).forEach(para => {
+    const p = document.createElement('p');
+    if (para.startsWith('<')) {
+      p.innerHTML = para;
+    } else {
+      p.textContent = para;
+    }
+    bodyEl.appendChild(p);
+  });
+
+  modalOpen = true;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  modalOpen = false;
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function onOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('modalOverlay').classList.contains('open')) { closeModal(); return; }
+  if (activeAgent) closeAgentPanel();
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildAgentNodes();
+  requestAnimationFrame(raf);
+
+  // Canopy Agent — hover lights the cascade; click scrolls to inline detail section below the arena.
+  const canopyEl = document.querySelector('.canopy-agent');
+  const cmcWrapper = document.querySelector('.cmc-wrapper');
+  const cmcChip = document.getElementById('cmcCircle');
+  const line1 = document.getElementById('canopyLine1');
+  const line2 = document.getElementById('canopyLine2');
+  const tipEl = document.getElementById('agentTooltip');
+
+  canopyEl.addEventListener('mouseenter', () => {
+    cmcWrapper.classList.add('canopy-hover');
+    cmcChip.classList.add('canopy-hover');
+    line1.classList.add('lit');
+    line2.classList.add('lit');
+  });
+  canopyEl.addEventListener('mouseleave', () => {
+    cmcWrapper.classList.remove('canopy-hover');
+    cmcChip.classList.remove('canopy-hover');
+    line1.classList.remove('lit');
+    line2.classList.remove('lit');
+  });
+  canopyEl.addEventListener('click', () => {
+    const target = document.getElementById('canopy-detail');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  tipEl.addEventListener('mouseleave', () => {
+    if (tipEl.classList.contains('tip-band')) scheduleBandHide(150);
+  });
+
+  /* Dead block below — was the old canopy tooltip + handlers. Replaced by inline detail section. */
+  /* eslint-disable */
+  if (false) { void `
+<div style="font-size:18px; font-weight:800; color:#fff; margin-bottom:10px; letter-spacing:0.01em;">🌳 Canopy Agent</div>
+<div style="font-size:13px; color:rgba(255,255,255,0.88); line-height:1.55; margin-bottom:10px;">Canopy Agent is the project&apos;s voice. The team names it at kickoff — Juan, Sarah, whatever fits — and from that point on, every project conversation flows through it. Foremen ask questions from the field on mobile. PMs run briefings in the trailer. Engineers chat with it on a laptop or tablet. And on the jobsite itself, fixed endpoints — meeting rooms, the trailer, certain field stations — let a trade foreman simply speak Canopy&apos;s name and get an answer back, no device required.</div>
+<div style="font-size:13px; color:rgba(255,255,255,0.88); line-height:1.55; margin-bottom:10px;">Canopy carries no domain knowledge of its own. That lives in the specialist agents and the CMC. What Canopy does is understand intent, route every question to the right specialist (or chain of specialists), assemble the cited answer, and deliver it back conversationally. It also keeps the team current without being asked — pushing rolling briefings from the agents on a 10–60 minute cadence so the project never goes silent.</div>
+<div style="font-size:13px; color:rgba(255,255,255,0.88); line-height:1.55; margin-bottom:6px;">It also knows who&apos;s talking to it. Every interaction is identity-aware: trade foremen get answers scoped to their work, clients see what the team has chosen to share, internal cost detail stays internal. The specialist agents trust Canopy to be the gate.</div>
+
+<div style="margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Soul <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">— set at kickoff, rarely changes</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">identity.md</span><span class="tip-dim"> — project name (Juan, Sarah, etc.), tone, formality, communication style</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">mission.md</span><span class="tip-dim"> — the shared project mission. On something like the Tennessee Titans stadium, this captures the ownership&apos;s mission, community-impact goals, and what the partnership is for. Canopy embodies it in every interaction.</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">values.md</span><span class="tip-dim"> — judgment priorities when there&apos;s a tradeoff (safety first, citation discipline, confidentiality, no claims without sources)</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Brain <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">— skills Canopy invokes on demand</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">voice-interface.skill</span><span class="tip-dim"> — wake-word detection on the project&apos;s chosen name, speech-to-text, text-to-speech</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">intent-router.skill</span><span class="tip-dim"> — parses every query, identifies the right specialist agent(s), dispatches in parallel when a question crosses domains</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">conversation-context.skill</span><span class="tip-dim"> — maintains thread state per user, per project, across phone, chat, voice, and jobsite endpoints</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">identity-and-access.skill</span><span class="tip-dim"> — verifies who&apos;s speaking, what role they hold, what they&apos;re authorized to see; redacts before delivery</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">confirmation-gate.skill</span><span class="tip-dim"> — handles HITL approvals via voice or chat (&quot;approve this RFI draft?&quot;, &quot;send this PCO?&quot;)</span></div>
+<div class="tip-breakdown-row"><span class="tip-skill">multi-modal-input.skill</span><span class="tip-dim"> — accepts voice, text, photos, and screenshots as input</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Memory <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">— state that grows over the project</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Conversation log</span><span class="tip-dim"> — every Q&amp;A with citations, written to the Project CMC</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Team roster</span><span class="tip-dim"> — who&apos;s on the project, what each person is authorized to see, who reports to whom, who&apos;s online right now</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">CMC Interaction</div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Reads</span><span class="tip-dim"> — Evidence Packs returned by specialist agents. Canopy never queries the CMC directly. Specialist agents own the citation conventions for their domain — sheet + revision for drawings, section + edition for specs, RFI number + date for RFIs — and translate raw CMC data into a properly cited answer.</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Writes</span><span class="tip-dim"> — Conversation log to the Project CMC — Q&amp;A, who asked, who answered, what was cited, identity context.</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Sub-agents <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">— autonomous loops</span></div>
+<div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px;">→</span><span class="tip-lbl"> Briefing Aggregator</span><span class="tip-dim"> — pulls rolling syncs from main agents every 10–60 minutes and composes daily / weekly digests for the team</span></div>
+<div class="tip-breakdown-row"><span style="color:#EF9F27; font-size:14px;">→</span><span class="tip-lbl"> Presence Tracker</span><span class="tip-dim"> — knows who&apos;s online, who&apos;s where, who&apos;s busy; makes sure Canopy addresses people by name and doesn&apos;t interrupt deep work</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">How Canopy stays fast</div>
+<div style="font-size:12.5px; color:rgba(255,255,255,0.78); line-height:1.55; margin-bottom:8px;">Canopy is the heaviest agent in the system, so speed is non-negotiable. Four mechanisms keep it snappy:</div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Parallel dispatch</span><span class="tip-dim"> — cross-domain questions fire multiple specialist agents simultaneously, not in sequence</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Canopy-level cache</span><span class="tip-dim"> — repeat queries (&quot;what&apos;s today&apos;s plan?&quot;) hit a recent-answer cache before going to a specialist</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Direct conversational replies</span><span class="tip-dim"> — chit-chat, acknowledgments, and conversation management never touch the CMC or an agent</span></div>
+<div class="tip-breakdown-row"><span class="tip-lbl">Co-location</span><span class="tip-dim"> — specialist agents run next to the CMC on a low-latency path; Canopy is the only component talking across the wire to humans</span></div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Safety coordination</div>
+<div style="font-size:12.5px; color:rgba(255,255,255,0.78); line-height:1.55;">The Safety Agent owns headcount, muster points, and evacuation routing. During a safety event, Canopy is the voice channel — it speaks for the Safety Agent on every endpoint at once, confirms identities at muster, and calls out who isn&apos;t yet accounted for. Safety does the analysis; Canopy makes sure everyone hears it.</div>
+</div>
+
+<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">
+<div style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.55); margin-bottom:8px; font-weight:700;">Built on</div>
+<div style="font-size:12.5px; color:rgba(255,255,255,0.78); line-height:1.55;">A foundation language model for natural language. The specialist agents are the knowledge. The CMC is the source of truth. Canopy Agent is the conductor — it never speaks for itself, only for what the specialist agents have cited from the CMC.</div>
+</div>
+`;
+
+  function showCanopyState() {
+    if (canopyHideTimer) { clearTimeout(canopyHideTimer); canopyHideTimer = null; }
+    cmcWrapper.classList.add('canopy-hover');
+    cmcChip.classList.add('canopy-hover');
+    line1.classList.add('lit');
+    line2.classList.add('lit');
+    tipEl.innerHTML = CANOPY_TIP_HTML;
+    tipEl.className = 'tip-canopy';
+    const rect = canopyEl.getBoundingClientRect();
+    const TIP_W = 620;
+    const left = Math.min(Math.max(rect.left + rect.width/2 - TIP_W/2, 8), window.innerWidth - TIP_W - 8);
+    tipEl.style.left = left + 'px';
+    // Pin to top of viewport so the tooltip never overflows the bottom
+    tipEl.style.top = '20px';
+    tipEl.style.bottom = '';
+    tipEl.scrollTop = 0;
+    requestAnimationFrame(() => tipEl.classList.add('visible'));
+  }
+  function hideCanopyState() {
+    cmcWrapper.classList.remove('canopy-hover');
+    cmcChip.classList.remove('canopy-hover');
+    line1.classList.remove('lit');
+    line2.classList.remove('lit');
+    // Only hide tooltip if it's still showing canopy content
+    // (otherwise we'd strip 'visible' off an orbit-agent tooltip that took over)
+    if (tipEl.classList.contains('tip-canopy')) {
+      tipEl.classList.remove('visible');
+    }
+  }
+  function scheduleCanopyHide(delay) {
+    if (canopyHideTimer) clearTimeout(canopyHideTimer);
+    canopyHideTimer = setTimeout(() => { canopyHideTimer = null; hideCanopyState(); }, delay);
+  }
+  canopyEl.addEventListener('mouseenter', showCanopyState);
+  canopyEl.addEventListener('mouseleave', () => scheduleCanopyHide(300));
+  tipEl.addEventListener('mouseenter', () => {
+    if (tipEl.classList.contains('tip-canopy') && canopyHideTimer) {
+      clearTimeout(canopyHideTimer); canopyHideTimer = null;
+    }
+  });
+  tipEl.addEventListener('mouseleave', () => {
+    if (tipEl.classList.contains('tip-canopy')) scheduleCanopyHide(150);
+  });
+  } /* end dead block */
+
+  // Document Ingestion hover — full cyan cascade + tooltip
+  const ingBox = document.getElementById('ingestionBox');
+  const docLine1 = document.getElementById('docLine1');
+  const docLine2 = document.getElementById('docLine2');
+  const tip = document.getElementById('agentTooltip');
+
+  // Anchor doc lines to the actual bottom of the ingestion box (handles reflow)
+  function updateDocLineAnchors() {
+    const arenaRect = document.getElementById('arena').getBoundingClientRect();
+    const boxRect = ingBox.getBoundingClientRect();
+    const y1 = boxRect.bottom - arenaRect.top;
+    docLine1.setAttribute('y1', y1);
+    docLine2.setAttribute('y1', y1);
+  }
+  updateDocLineAnchors();
+  window.addEventListener('resize', updateDocLineAnchors);
+  const INGESTION_TIP_HTML =
+    '<div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:8px; letter-spacing:0.01em;">📥 Document Ingestion</div>' +
+    '<div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.5; margin-bottom:8px;">The intake portal for every project. Teams upload material documents (drawings, specs, RFIs, submittals, contracts, photos, etc.) here at project kick-off and throughout the lifecycle.</div>' +
+    '<div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.5; margin-bottom:8px;">It also connects to a local or business SharePoint / cloud storage area — so when field users or a voice conversation reference a document by name, CanopyOS can pull it directly if material is already somewhere in the company\'s system.</div>' +
+    '<div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.5;">Everything ingested here is versioned, indexed, and bound to the CMC\'s Source Truth Band so every downstream answer is citable back to its source.</div>';
+
+  ingBox.addEventListener('mouseenter', () => {
+    hovering = true;
+    ingBox.classList.add('lit');
+    docLine1.classList.add('lit');
+    docLine2.classList.add('lit');
+    canopyEl.classList.add('lit');
+    line1.classList.add('lit');
+    line2.classList.add('lit');
+    cmcWrapper.classList.add('canopy-hover');
+    cmcChip.classList.add('canopy-hover');
+    tip.innerHTML = INGESTION_TIP_HTML;
+    tip.className = 'tip-cyan tip-above';
+    const rect = ingBox.getBoundingClientRect();
+    const TIP_W = 580, GAP = 12;
+    const left = Math.min(Math.max(rect.left + rect.width/2 - TIP_W/2, 8), window.innerWidth - TIP_W - 8);
+    tip.style.left = left + 'px';
+    tip.style.top = '';
+    tip.style.bottom = (window.innerHeight - rect.top + GAP) + 'px';
+    requestAnimationFrame(() => tip.classList.add('visible'));
+  });
+  ingBox.addEventListener('mouseleave', () => {
+    hovering = false;
+    ingBox.classList.remove('lit');
+    docLine1.classList.remove('lit');
+    docLine2.classList.remove('lit');
+    canopyEl.classList.remove('lit');
+    line1.classList.remove('lit');
+    line2.classList.remove('lit');
+    cmcWrapper.classList.remove('canopy-hover');
+    cmcChip.classList.remove('canopy-hover');
+    tip.classList.remove('visible');
+  });
+
+  // Field Users hover — gold line + Canopy Agent lit (no CMC cascade)
+  const entryBox = document.getElementById('entryBox');
+  const fieldLine = document.getElementById('fieldLine');
+
+  function updateFieldLine() {
+    const arenaRect = document.getElementById('arena').getBoundingClientRect();
+    const entryRect = entryBox.getBoundingClientRect();
+    const canopyRect = canopyEl.getBoundingClientRect();
+    const y = canopyRect.top + canopyRect.height/2 - arenaRect.top;
+    const x1 = entryRect.right - arenaRect.left;
+    const x2 = canopyRect.left - arenaRect.left;
+    fieldLine.setAttribute('x1', x1);
+    fieldLine.setAttribute('y1', y);
+    fieldLine.setAttribute('x2', x2);
+    fieldLine.setAttribute('y2', y);
+  }
+  updateFieldLine();
+  window.addEventListener('resize', updateFieldLine);
+
+  entryBox.addEventListener('mouseenter', () => {
+    hovering = true;
+    entryBox.classList.add('lit');
+    fieldLine.classList.add('lit');
+    canopyEl.classList.add('lit');
+  });
+  entryBox.addEventListener('mouseleave', () => {
+    hovering = false;
+    entryBox.classList.remove('lit');
+    fieldLine.classList.remove('lit');
+    canopyEl.classList.remove('lit');
+  });
+
+  // System Output hover — mirrors Field Users on the right side
+  const outputBox = document.getElementById('outputBox');
+  const outputLine = document.getElementById('outputLine');
+
+  function updateOutputLine() {
+    const arenaRect = document.getElementById('arena').getBoundingClientRect();
+    const outputRect = outputBox.getBoundingClientRect();
+    const canopyRect = canopyEl.getBoundingClientRect();
+    const y = canopyRect.top + canopyRect.height/2 - arenaRect.top;
+    const x1 = canopyRect.right - arenaRect.left;
+    const x2 = outputRect.left - arenaRect.left;
+    outputLine.setAttribute('x1', x1);
+    outputLine.setAttribute('y1', y);
+    outputLine.setAttribute('x2', x2);
+    outputLine.setAttribute('y2', y);
+  }
+  updateOutputLine();
+  window.addEventListener('resize', updateOutputLine);
+
+  outputBox.addEventListener('mouseenter', () => {
+    hovering = true;
+    outputBox.classList.add('lit');
+    outputLine.classList.add('lit');
+    canopyEl.classList.add('lit');
+  });
+  outputBox.addEventListener('mouseleave', () => {
+    hovering = false;
+    outputBox.classList.remove('lit');
+    outputLine.classList.remove('lit');
+    canopyEl.classList.remove('lit');
+  });
+
+  // CMC band hover tooltips (replaces click-to-modal)
+  function buildBandTipHTML(key) {
+    const d = BANDS[key];
+    if (!d) return '';
+    let html = '';
+    html += '<div style="font-size:18px; font-weight:800; color:#fff; margin-bottom:6px;">' + d.title + '</div>';
+    html += '<div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#EF9F27; margin-bottom:10px;">' + d.tag + '</div>';
+    html += '<div style="font-size:13px; color:rgba(255,255,255,0.78); font-style:italic; line-height:1.5; margin-bottom:14px;">' + d.subtitle + '</div>';
+    if (d.nodes && d.nodes.length) {
+      html += '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">';
+      d.nodes.forEach(function(n) {
+        html += '<span style="font-size:12px; font-weight:600; color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); border-radius:6px; padding:4px 10px;">' + n + '</span>';
+      });
+      html += '</div>';
+    }
+    if (d.body && d.body.length) {
+      html += '<div style="padding-top:10px; border-top:1px solid rgba(255,255,255,0.14);">';
+      d.body.forEach(function(para) {
+        html += '<div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.6; margin-bottom:10px;">' + para + '</div>';
+      });
+      html += '</div>';
+    }
+    return html;
+  }
+  let bandHideTimer = null;
+  function showBandTip(key) {
+    if (bandHideTimer) { clearTimeout(bandHideTimer); bandHideTimer = null; }
+    tipEl.innerHTML = buildBandTipHTML(key);
+    tipEl.className = 'tip-band';
+    const TIP_W = 620;
+    tipEl.style.left = Math.max(8, (window.innerWidth - TIP_W) / 2) + 'px';
+    tipEl.style.top = '20px';
+    tipEl.style.bottom = '';
+    tipEl.scrollTop = 0;
+    requestAnimationFrame(() => tipEl.classList.add('visible'));
+  }
+  function hideBandTip() {
+    if (tipEl.classList.contains('tip-band')) tipEl.classList.remove('visible');
+  }
+  function scheduleBandHide(delay) {
+    if (bandHideTimer) clearTimeout(bandHideTimer);
+    bandHideTimer = setTimeout(() => { bandHideTimer = null; hideBandTip(); }, delay);
+  }
+  document.querySelectorAll('.cmc-band').forEach(function(band) {
+    const key = band.dataset.band;
+    if (!key) return;
+    // All CMC bands → click scrolls to their inline detail panel below the arena
+    band.addEventListener('click', () => {
+      const target = document.getElementById(key + '-detail');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  tipEl.addEventListener('mouseenter', () => {
+    if (tipEl.classList.contains('tip-band') && bandHideTimer) {
+      clearTimeout(bandHideTimer); bandHideTimer = null;
+    }
+  });
+  tipEl.addEventListener('mouseleave', () => {
+    if (tipEl.classList.contains('tip-band')) scheduleBandHide(150);
+  });
+
+  // Nav scroll spy — highlight the link for the section currently in view
+  (function() {
+    const navLinks = document.querySelectorAll('.nav-links a');
+    function updateActiveNav() {
+      const scrollPos = window.scrollY + 120; // offset for sticky nav
+      let activeId = '';
+      navLinks.forEach(function(link) {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        const target = document.getElementById(href.slice(1));
+        if (target && target.offsetTop <= scrollPos) {
+          activeId = href.slice(1);
+        }
+      });
+      navLinks.forEach(function(link) {
+        const href = link.getAttribute('href');
+        link.classList.toggle('active', href === '#' + activeId);
+      });
+    }
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+    updateActiveNav();
+  })();
+
+  // CMC expansion modal
+  (function() {
+    const card = document.getElementById('cmcExpandCard');
+    const overlay = document.getElementById('cmcModal');
+    if (!card || !overlay) return;
+    function open() {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    card.addEventListener('click', open);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) close();
+    });
+    overlay.querySelector('.cmc-modal-close').addEventListener('click', close);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) close();
+    });
+  })();
+});
+</script>
+
+<!-- CMC Expansion Modal -->
+<div class="cmc-modal-overlay" id="cmcModal">
+  <div class="cmc-modal-card">
+    <button class="cmc-modal-close" aria-label="Close">✕</button>
+    <div class="cmc-modal-eyebrow">Compiled Memory Core</div>
+    <h2 class="cmc-modal-title">How CanopyOS rethinks agent memory</h2>
+    <div class="cmc-modal-body">
+      <p>Modern agent systems handle memory three ways: <u>stuff documents into the prompt</u>, <u>search them with RAG at query time</u>, or <u>summarize as chat goes on</u>. All three leave the agent re-interpreting raw material every time someone asks a question — fast to build, but the moment documents change or contradict each other, the agent has no way to know.</p>
+      <p>The Compiled Memory Core works differently. Raw documents are stored once in an immutable Source Ledger. A set of domain-specific compilers turns each document into structured, typed memory — with source provenance, confidence levels, conflict detection, and a version lifecycle. A background consolidation loop runs continuously, resolving contradictions and flagging stale claims while no one is asking.</p>
+      <p>By the time a question arrives, retrieval queries pre-vetted knowledge, not raw text. The output is an Evidence Pack — the answer plus its source span, freshness, confidence, and known conflicts. Every claim is auditable in seconds.</p>
+      <p>This split also keeps the agents themselves lightweight. The specialists sitting on top of the CMC carry domain logic and workflow only — not knowledge. The CMC carries the knowledge. The result is a system where every agent acts as if it has photographic recall, without the weight that would slow it down in the field.</p>
+      <p><strong>The architectural ancestry.</strong> Andrej Karpathy has long argued that real agents need durable memory layers beyond the prompt. Geoffrey Hinton and the neuroscience-inspired AI tradition have identified sleep-driven memory consolidation as a missing piece in how models retain useful knowledge over time. The Compiled Memory Core learns from this body of theory and science, and is designed as a production memory system where the stakes are concrete — a wrong answer on a construction project can cost millions, sometimes lives.</p>
+      <p>The CMC is the part of CanopyOS we believe will matter beyond construction.</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
